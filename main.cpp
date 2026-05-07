@@ -1,6 +1,12 @@
 #include <iostream>
+#include <windows.h>
+#include "cube.h"
+
 using namespace std;
 
-int main(){
-    cout << "Hello World!\n";
+int main() {
+    SetConsoleOutputCP(CP_UTF8);
+
+    Cube cube = Cube();
+    cube.print();
 }
