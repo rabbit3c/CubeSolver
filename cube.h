@@ -9,6 +9,8 @@ class Cube {
 
         void print();
 
+        bool completion();
+
     private:
         array<Side, 6> cube;
 };

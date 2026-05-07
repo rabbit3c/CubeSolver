@@ -12,3 +12,11 @@ void Cube::print() {
         side.print();
     }
 }
+
+bool Cube::completion() {
+    for (Side side : cube) {
+        if (!side.completion()) return false;
+    }
+    
+    return true;
+}

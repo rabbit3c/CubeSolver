@@ -11,6 +11,8 @@ class Side {
 
         Side(color colors[9]);
 
+        bool completion();
+
         void print();
         
     private:

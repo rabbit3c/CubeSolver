@@ -26,3 +26,14 @@ void Side::print() {
 
     cout << stringSide << endl;
 }
+
+bool Side::completion() {
+    color c = side[0][0];
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (c != side[i][j]) return false;
+        }
+    }
+
+    return true;
+}
