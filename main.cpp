@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "cube.h"
 #include "scrambler.h"
-#include "solve.h"
+#include "solver.h"
 
 using namespace std;
 
@@ -11,13 +11,13 @@ int main() {
 
     Cube cube = Cube();
 
-    int depth = 7;
+    int depth = 6;
     
     scramble(cube, depth);
 
     cout << endl;
 
-    solve(cube, depth, 0);
+    Solver::multisolve(cube, depth);
 
     if (cube.completion()) cout << "Cube completed!" << endl;
 }
