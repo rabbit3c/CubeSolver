@@ -2,6 +2,7 @@
 
 #include "side.h"
 #include <array>
+#include <vector>
 
 class Cube {
     public:
@@ -15,10 +16,16 @@ class Cube {
         void back(int n = 1);
 
         void print();
+        void printMoves();
+
+        void clearMoves();
 
         bool completion();
 
     private:
         array<Side, 6> cube;
+        vector<string> moves;
+
         void move(int face, int sides[4], bool types[4], int nLines[4], int n);
+        void addMove(string c, int n);
 };

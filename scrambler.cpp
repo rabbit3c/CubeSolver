@@ -52,21 +52,30 @@ void executeMoves(Cube &cube, string strMoves) {
     }
 }
 
-string scramble(Cube &cube, int numMoves) {
+void scramble(Cube &cube, int numMoves) {
     mt19937 rng(random_device{}());
-    uniform_int_distribution<int> dist18(0, 17);
+    uniform_int_distribution<int> dist6(0, 5);
+    uniform_int_distribution<int> dist3(1, 3);
 
-    string options[18]  = {"U", "U2", "U'", "D", "D2", "D'", "R", "R2", "R'", "L", "L2", "L'", "F", "F2", "F'", "B", "B2", "B'"};
+    vector<void(Cube::*)(int)> options = {
+        &Cube::up, &Cube::down, &Cube::right, &Cube::left, &Cube::front, &Cube::back
+    };
 
-    string moves;
-
+    int lastI;
     for (int _ = 0; _ < numMoves; _++) {
-        int i = dist18(rng);
-        moves.append(options[i] + " ");
+        int i = dist6(rng);
+        while (i == lastI) i = dist6(rng);
+        lastI = i;
+
+        int n = dist3(rng);
+        
+        (cube.*options[i])(n);
     }
 
-    executeMoves(cube, moves);
+    cout << "Cube scrambled" << endl;
+    cout << "Scramble: " << endl;
+    cube.printMoves();
 
-    return moves;
+    cube.clearMoves();
 }
 

@@ -32,46 +32,65 @@ void Cube::move(int face, int sides[4], bool types[4], int nLines[4], int n) {
     }
 }
 
+void Cube::addMove(string c, int n) {
+    if (n == 2) c += "2";
+    if (n == 3) c += "'";
+
+    moves.push_back(c);
+}
+
 void Cube::up(int n) {
     int sides[4] = {2, 3, 4, 5};
     int nLines[4] = {0, 0, 0, 0};
     bool types[4] = {true, true, true, true};
+
     move(0, sides, types, nLines, n);
+    addMove("U", n);
 }
 
 void Cube::down(int n) {
     int sides[4] = {5, 4, 3, 2};
     int nLines[4] = {2, 2, 2, 2};
     bool types[4] = {true, true, true, true};
+
     move(1, sides, types, nLines, n);
+    addMove("D", n);
 }
 
 void Cube::right(int n) {
     int sides[4] = {1, 2, 0, 4};
     int nLines[4] = {2, 2, 2, 0};
     bool types[4] = {false, false, false, false};
+
     move(5, sides, types, nLines, n);
+    addMove("R", n);
 }
 
 void Cube::left(int n) {
     int sides[4] = {0, 2, 1, 4};
     int nLines[4] = {0, 0, 0, 2};
     bool types[4] = {false, false, false, false};
+
     move(3, sides, types, nLines, n);
+    addMove("L", n);
 }
 
 void Cube::front(int n) {
     int sides[4] = {0, 5, 1, 3};
     int nLines[4] = {2, 0, 0, 2};
     bool types[4] = {true, false, true, false};
+
     move(2, sides, types, nLines, n);
+    addMove("F", n);
 }
 
 void Cube::back(int n) {
     int sides[4] = {5, 0, 3, 1};
     int nLines[4] = {2, 0, 0, 2};
     bool types[4] = {false, true, false, true};
+
     move(4, sides, types, nLines, n);
+    addMove("B", n);
 }
 
 void Cube::print() {
@@ -80,6 +99,17 @@ void Cube::print() {
     for (Side side : cube) {
         side.print();
     }
+}
+
+void Cube::printMoves() {
+    for (string move : moves) {
+        cout << move << " ";
+    }
+    cout << endl;
+}
+
+void Cube::clearMoves() {
+    moves.clear();
 }
 
 bool Cube::completion() {
