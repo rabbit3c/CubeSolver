@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include "colors.h"
 
 class Side {
@@ -9,29 +10,19 @@ class Side {
 
         Side(color c);
 
-        Side(color colors[9]);
-
-        bool reverseCol = false;
-        bool reverseLine = false;
-
         void rotate(int n);
 
-        array<color, 3> getLine(int n);
+        uint32_t getLine(int n);
 
-        array<color, 3> getCol(int n);
-
-        void replaceLine(int n, array<color, 3> line);
-
-        void replaceCol(int n, array<color, 3> col);
+        void replaceLine(int n, int line);
 
         bool completion();
 
         void print();
         
     private:
-        array<color, 9> side;
-
-        static const int rotations[3][9];
-
-        static array<color, 3> reverse(array<color, 3> line);
+        uint32_t side;
+        //1 2 3   03 06 09
+        //8 0 4   24 00 12
+        //7 6 5   21 18 15
 };

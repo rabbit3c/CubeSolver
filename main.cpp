@@ -7,8 +7,8 @@
 using namespace std;
 
 int main() {
-    //test(6, 5);
-    //return 0;
+    test(6, 5);
+    return 0;
 
     SetConsoleOutputCP(CP_UTF8);
 
@@ -18,6 +18,7 @@ int main() {
     Solver solver = Solver(depth);
         
     scramble(cube, depth);
+    //cube.print();
 
     cout << endl;
 

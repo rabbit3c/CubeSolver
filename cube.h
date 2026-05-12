@@ -26,6 +26,9 @@ class Cube {
         array<Side, 6> cube;
         vector<string> moves;
 
-        void move(int face, int sides[4], bool types[4], int nLines[4], int n);
+        static array<int[4], 6> sides;
+        static array<int[4], 6> nLines;
+
+        void move(int face, int sides[4], int nLines[4], int n);
         void addMove(string c, int n);
 };

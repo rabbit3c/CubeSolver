@@ -4,32 +4,70 @@
 Cube::Cube() {
     for (int i = 0; i < cube.size(); i++) {
         cube[i] = static_cast<color>(i);
-        
-        if (i == 4) cube[i].reverseCol = true;
-        if (i == 3) cube[i].reverseCol = true;
-        if (i == 1) cube[i].reverseLine = true;
     }
 }
 
-array<color, 3> reverse(array<color, 3> line) {
-    return {line[2], line[1], line[0]};
-}
-
-void Cube::move(int face, int sides[4], bool types[4], int nLines[4], int n) {
+void Cube::move(int face, int sides[4], int nLines[4], int n) {
     cube[face].rotate(n);
 
-    array<array<color, 3>, 4> lines;
+    array<int, 4> lines;
     for (int i = 0; i < 4; i++) {
-        if (types[i]) lines[i] = cube[sides[i]].getLine(nLines[i]);
-        else lines[i] = cube[sides[i]].getCol(nLines[i]);
+        lines[i] = cube[sides[i]].getLine(nLines[i]);
     }
 
     for (int i = 0; i < 4; i++) {
         int j = (i - n + 4) % 4;
 
-        if (types[i]) cube[sides[i]].replaceLine(nLines[i], lines[j]);
-        else cube[sides[i]].replaceCol(nLines[i], lines[j]);
+        cube[sides[i]].replaceLine(nLines[i], lines[j]);
     }
+}
+
+array<int[4], 6> Cube::sides = {{
+    {2, 3, 4, 5},
+    {5, 4, 3, 2},
+    {1, 2, 0, 4},
+    {0, 2, 1, 4},
+    {0, 5, 1, 3},
+    {5, 0, 3, 1}
+}};
+
+array<int[4], 6> Cube::nLines = {{
+    {0, 0, 0, 0},
+    {2, 2, 2, 2},
+    {1, 1, 1, 3},
+    {3, 3, 3, 1},
+    {2, 3, 0, 1},
+    {1, 0, 3, 2}
+}};
+
+void Cube::up(int n) {
+    move(0, sides[0], nLines[0], n);
+    addMove("U", n);
+}
+
+void Cube::down(int n) {
+    move(1, sides[1], nLines[1], n);
+    addMove("D", n);
+}
+
+void Cube::right(int n) {
+    move(5, sides[2], nLines[2], n);
+    addMove("R", n);
+}
+
+void Cube::left(int n) {
+    move(3, sides[3], nLines[3], n);
+    addMove("L", n);
+}
+
+void Cube::front(int n) {
+    move(2, sides[4], nLines[4], n);
+    addMove("F", n);
+}
+
+void Cube::back(int n) {
+    move(4, sides[5], nLines[5], n);
+    addMove("B", n);
 }
 
 void Cube::addMove(string c, int n) {
@@ -37,60 +75,6 @@ void Cube::addMove(string c, int n) {
     if (n == 3) c += "'";
 
     moves.push_back(c);
-}
-
-void Cube::up(int n) {
-    int sides[4] = {2, 3, 4, 5};
-    int nLines[4] = {0, 0, 0, 0};
-    bool types[4] = {true, true, true, true};
-
-    move(0, sides, types, nLines, n);
-    addMove("U", n);
-}
-
-void Cube::down(int n) {
-    int sides[4] = {5, 4, 3, 2};
-    int nLines[4] = {2, 2, 2, 2};
-    bool types[4] = {true, true, true, true};
-
-    move(1, sides, types, nLines, n);
-    addMove("D", n);
-}
-
-void Cube::right(int n) {
-    int sides[4] = {1, 2, 0, 4};
-    int nLines[4] = {2, 2, 2, 0};
-    bool types[4] = {false, false, false, false};
-
-    move(5, sides, types, nLines, n);
-    addMove("R", n);
-}
-
-void Cube::left(int n) {
-    int sides[4] = {0, 2, 1, 4};
-    int nLines[4] = {0, 0, 0, 2};
-    bool types[4] = {false, false, false, false};
-
-    move(3, sides, types, nLines, n);
-    addMove("L", n);
-}
-
-void Cube::front(int n) {
-    int sides[4] = {0, 5, 1, 3};
-    int nLines[4] = {2, 0, 0, 2};
-    bool types[4] = {true, false, true, false};
-
-    move(2, sides, types, nLines, n);
-    addMove("F", n);
-}
-
-void Cube::back(int n) {
-    int sides[4] = {5, 0, 3, 1};
-    int nLines[4] = {2, 0, 0, 2};
-    bool types[4] = {false, true, false, true};
-
-    move(4, sides, types, nLines, n);
-    addMove("B", n);
 }
 
 void Cube::print() {

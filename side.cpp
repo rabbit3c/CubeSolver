@@ -5,75 +5,39 @@
 using namespace std;
 
 Side::Side(color c) {
-    side.fill(c);
+    side = c;
+    for (int i = 1; i < 9; i++) side += (c << (i * 3));
 }
-
-Side::Side(color colors[9]) {
-    for (int i = 0; i < side.size(); i++) {
-        side[i] = colors[i];
-    }
-}
-
-const int Side::rotations[3][9] = {
-    {6,3,0, 7,4,1, 8,5,2},
-    {8,7,6, 5,4,3, 2,1,0},
-    {2,5,8, 1,4,7, 0,3,6}
-};
 
 //Clockwise Rotation
 void Side::rotate(int n) {
-    if (n > 3 || n < 1) throw invalid_argument("Number of rotation must be between 1 and 3");
-    array<color, 9> temp;
-
-    for (int i = 0; i < side.size(); i++) {
-        temp[i] = side[rotations[n - 1][i]];
-    }
-    side = temp;
+    uint32_t center = side & 0b111;
+    uint32_t ring = side >> 3;
+    ring = ((ring << (n * 6)) | (ring >> (24 - n * 6))) & 0b111111111111111111111111;
+    side = center | (ring << 3);
 }
 
-array<color, 3> Side::reverse(array<color, 3> line) {
-    return {line[2], line[1], line[0]};
-}
-
-array<color, 3> Side::getLine(int n) {
-    array<color, 3> line;
-
-    for (int i = 0; i < line.size(); i++) {
-        line[i] = side[n * 3 + i];
-    }
-
-    if (reverseLine) return reverse(line);
+uint32_t Side::getLine(int n) {
+    side &= 0b111111111111111111111111111;
+    uint32_t line = (side >> (n * 6 + 3)) & 0b111111111;
+    if (n == 3) line |= ((side >> 3) & 0b111) << 6;
     return line;
 }
 
-array<color, 3> Side::getCol(int n) {
-    array<color, 3> col;
-
-    for (int i = 0; i < col.size(); i++) {
-        col[i] = side[i * 3 + n];
-    }
-    if (reverseCol) return reverse(col);
-    return col;
-}
-
-void Side::replaceLine(int n, array<color, 3> line) {
-    if (reverseLine) line = reverse(line);
-    for (int i = 0; i < line.size(); i++) {
-        side[n * 3 + i] = line[i];
-    }
-}
-
-void Side::replaceCol(int n, array<color, 3> col) {
-    if (reverseCol) col = reverse(col);
-    for (int i = 0; i < col.size(); i++) {
-        side[i * 3 + n] = col[i];
-    }
+void Side::replaceLine(int n, int line) {
+    uint32_t mask = 0b111111111u << (n * 6 + 3); 
+    side = (side & ~mask) | (line << (n * 6 + 3));
+    if (n == 3) side = (side & ~(0b111u << 3)) | (((line >> 6) & 0b111) << 3); 
 }
 
 void Side::print() {
     string stringSide = "";
-    for (int i = 0; i < side.size(); i++) {
-        stringSide.append(colorToString(side[i]));
+    int order[9] = {1, 2, 3, 8, 0, 4, 7, 6, 5};
+
+    for (int i = 0; i < 9; i++) {
+        color c = static_cast<color>((side >> (order[i] * 3)) & 0b111);
+        stringSide.append(colorToString(c));
+
         if ((i + 1) % 3 == 0) stringSide.append("\n");
     }
 
@@ -81,9 +45,9 @@ void Side::print() {
 }
 
 bool Side::completion() {
-    color c = side[0];
-    for (int i = 1; i < side.size(); i++) {
-        if (c != side[i]) return false;
+    uint32_t c = side & 0b111;
+    for (int i = 1; i < 9; i++) {
+        if (((side >> (i * 3)) & 0b111) != c) return false;
     }
 
     return true;
