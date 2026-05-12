@@ -35,6 +35,7 @@ void Solver::solve(Cube cube, int depth, int lastMove) {
 
     for (int i = 0; i < options.size(); i++) {
         if (i == lastMove) continue;
+        if (i + 1 == lastMove && i % 2 == 0) continue;
 
         for (int n = 1; n <= 3; n++) {
             tryMove(cube, i, n, depth);
