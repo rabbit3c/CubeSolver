@@ -15,10 +15,10 @@ void Solver::multisolve(Cube cube) {
     int depth = 1;
 
     vector<thread> threads;
-    for (void(Cube::*option)(int) : options) {
+    for (int i = 0; i < options.size(); i++) {
         for (int n = 1; n <= 3; n++) {
-            threads.push_back(thread([this, cube, option, n, depth]() {
-                tryMove(cube, option, n, depth);
+            threads.push_back(thread([this, cube, i, n, depth]() {
+                tryMove(cube, i, n, depth);
             }));
         }
     }
@@ -29,21 +29,23 @@ void Solver::multisolve(Cube cube) {
 }
 
 
-void Solver::solve(Cube cube, int depth) {
+void Solver::solve(Cube cube, int depth, int lastMove) {
     depth += 1;
     if (depth > maxDepth) return;
 
-    for (void(Cube::*option)(int) : options) {
+    for (int i = 0; i < options.size(); i++) {
+        if (i == lastMove) continue;
+
         for (int n = 1; n <= 3; n++) {
-            tryMove(cube, option, n, depth);
+            tryMove(cube, i, n, depth);
         }
     }
 }
 
 
-void Solver::tryMove(Cube cube, void(Cube::*option)(int), int n, int depth) {
+void Solver::tryMove(Cube cube, int i, int n, int depth) {
     Cube newCube = cube;
-    (newCube.*option)(n);
+    (newCube.*options[i])(n);
 
     if (newCube.completion()) {
         if (logging) {
@@ -56,7 +58,7 @@ void Solver::tryMove(Cube cube, void(Cube::*option)(int), int n, int depth) {
         return;
     }
     
-    solve(newCube, depth);
+    solve(newCube, depth, i);
 }
 
 void test(int depth, int runs) {

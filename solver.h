@@ -7,7 +7,7 @@ class Solver {
     public:
         Solver(int maxDepth, bool logging=true);
 
-        void solve(Cube cube, int depth);
+        void solve(Cube cube, int depth, int lastMove);
         void multisolve(Cube cube);
         
     private:
@@ -17,7 +17,7 @@ class Solver {
         int maxDepth;
         bool logging;
 
-        void tryMove(Cube cube, void(Cube::*option)(int), int n, int depth);
+        void tryMove(Cube cube, int i, int n, int depth);
 };
 
 void test(int depth, int runs);
