@@ -7,17 +7,18 @@
 using namespace std;
 
 int main() {
+    //test(6, 5);
+
     SetConsoleOutputCP(CP_UTF8);
 
-    Cube cube = Cube();
-
     int depth = 6;
-    
+
+    Cube cube = Cube();
+    Solver solver = Solver(depth);
+        
     scramble(cube, depth);
 
     cout << endl;
 
-    Solver::multisolve(cube, depth);
-
-    if (cube.completion()) cout << "Cube completed!" << endl;
+    solver.multisolve(cube);
 }

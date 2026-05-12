@@ -52,7 +52,7 @@ void executeMoves(Cube &cube, string strMoves) {
     }
 }
 
-void scramble(Cube &cube, int numMoves) {
+void scramble(Cube &cube, int numMoves, bool logging) {
     mt19937 rng(random_device{}());
     uniform_int_distribution<int> dist6(0, 5);
     uniform_int_distribution<int> dist3(1, 3);
@@ -72,9 +72,11 @@ void scramble(Cube &cube, int numMoves) {
         (cube.*options[i])(n);
     }
 
-    cout << "Cube scrambled" << endl;
-    cout << "Scramble: " << endl;
-    cube.printMoves();
+    if (logging) {
+        cout << "Cube scrambled" << endl;
+        cout << "Scramble: " << endl;
+        cube.printMoves();
+    }
 
     cube.clearMoves();
 }

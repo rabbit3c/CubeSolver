@@ -5,11 +5,19 @@
 
 class Solver {
     public:
-        static void solve(Cube cube, int maxDepth, int depth);
-        static void multisolve(Cube cube, int maxDepth);
+        Solver(int maxDepth, bool logging=true);
+
+        void solve(Cube cube, int depth);
+        void multisolve(Cube cube);
+        
     private:
-        static mutex printMutex;
         static vector<void(Cube::*)(int)> options;
 
-        static void tryMove(Cube cube, void(Cube::*option)(int), int n, int maxDepth, int depth);
+        mutex printMutex;
+        int maxDepth;
+        bool logging;
+
+        void tryMove(Cube cube, void(Cube::*option)(int), int n, int depth);
 };
+
+void test(int depth, int runs);

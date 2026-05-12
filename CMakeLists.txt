@@ -6,4 +6,3 @@ add_executable(CubeSolver main.cpp side.cpp colors.cpp cube.cpp scrambler.cpp
 
 include(CTest)
 enable_testing()
-
