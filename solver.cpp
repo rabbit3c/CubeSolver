@@ -63,20 +63,28 @@ void Solver::tryMove(Cube cube, int i, int n, int depth) {
 }
 
 void test(int depth, int runs) {
-    auto start = chrono::high_resolution_clock::now();
-
     Solver solver = Solver(depth, false);
+    vector<Cube> cubes;
 
-    for (int n = 1; n <= runs; n++) {
+    cout << "Creating Cubes" << endl;
+    for (int i = 1; i <= runs; i++) {
         Cube cube = Cube();
         scramble(cube, depth, false);
-        solver.multisolve(cube);
-
-        cout << "Run " << n << " done" << endl;
+        cubes.push_back(cube);
     }
 
-    auto end = chrono::high_resolution_clock::now();
+    cout << "Starting..." << endl;
+    auto start = chrono::system_clock::now();
+
+    for (int i = 1; i <= runs; i++) {
+        solver.multisolve(cubes[i]);
+
+        cout << "Run " << i << " done" << endl;
+    }
+
+    auto end = chrono::system_clock::now();
     auto duration = chrono::duration_cast<chrono::milliseconds>(end-start);
+    cout << "Done!" << endl;
 
     cout << endl;
     cout << "Total time: " << duration.count() << "ms" << endl;
