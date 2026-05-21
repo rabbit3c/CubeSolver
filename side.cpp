@@ -20,7 +20,6 @@ Side::Side(color c) {
 void Side::rotate(int n) {
     int shift = n * 6;
     ring = ((ring << shift) | (ring >> (24 - shift))) & ring_mask;
-    ring &= ring_mask;
 }
 
 uint16_t Side::getLine(int n) {
