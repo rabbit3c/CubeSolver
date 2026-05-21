@@ -4,46 +4,52 @@
 
 using namespace std;
 
-uint32_t Side::square_mask = (1 << 3) - 1;
-uint32_t Side::line_mask = (1 << 9) - 1;
+uint8_t Side::square_mask = 0b111;
+uint16_t Side::line_mask = (1 << 9) - 1;
 uint32_t Side::ring_mask = (1 << 24) - 1;
-uint32_t Side::side_mask = (1 << 27) - 1;
 
 Side::Side(color c) {
-    side = c;
-    for (int i = 1; i < 9; i++) side += (c << (i * 3));
+    center = c;
+    ring_completed = c;
+    for (int i = 1; i < 8; i++) ring_completed += (c << (i * 3));
+
+    ring = ring_completed;
 }
 
 //Clockwise Rotation
 void Side::rotate(int n) {
-    uint32_t center = side & 0b111;
-    uint32_t ring = side >> 3;
-    uint32_t shift = n * 6;
+    int shift = n * 6;
     ring = ((ring << shift) | (ring >> (24 - shift))) & ring_mask;
-    side = center | (ring << 3);
+    ring &= ring_mask;
 }
 
-uint32_t Side::getLine(int n) {
-    side &= side_mask;
-    uint32_t shift = n * 6 + 3;
-    uint32_t line = (side >> shift) & line_mask;
-    if (n == 3) line |= ((side >> 3) & square_mask) << 6;
+uint16_t Side::getLine(int n) {
+    int shift = n * 6;
+    uint32_t line = (ring >> shift) & line_mask;
+    if (n == 3) line |= (ring & square_mask) << 6; 
     return line;
 }
 
 void Side::replaceLine(int n, int line) {
-    uint32_t shift = n * 6 + 3;
+    int shift = n * 6;
     uint32_t mask = line_mask << shift; 
-    side = (side & ~mask) | (line << shift);
-    if (n == 3) side = (side & ~(square_mask << 3)) | (((line >> 6) & square_mask) << 3); 
+    ring = (ring & ~mask) | (line << shift);
+    if (n == 3) ring = (ring & ~square_mask) | ((line >> 6) & square_mask);
+    ring &= ring_mask;
 }
 
 void Side::print() {
     string stringSide = "";
-    int order[9] = {1, 2, 3, 8, 0, 4, 7, 6, 5};
+    int order[9] = {0, 1, 2, 7, 0, 3, 6, 5, 4};
 
     for (int i = 0; i < 9; i++) {
-        color c = static_cast<color>((side >> (order[i] * 3)) & square_mask);
+        if (i == 4) {
+            color c = static_cast<color>(center);
+            stringSide.append(colorToString(c));
+            continue;
+        }
+
+        color c = static_cast<color>((ring >> (order[i] * 3)) & square_mask);
         stringSide.append(colorToString(c));
 
         if ((i + 1) % 3 == 0) stringSide.append("\n");
@@ -53,10 +59,7 @@ void Side::print() {
 }
 
 bool Side::completion() {
-    uint32_t c = side & square_mask;
-    for (int i = 1; i < 9; i++) {
-        if (((side >> (i * 3)) & square_mask) != c) return false;
-    }
+    return ring == ring_completed;
 
     return true;
 }
