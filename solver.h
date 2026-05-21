@@ -1,23 +1,27 @@
-#pragma once
-#include "cube.h"
+#pragma 
 #include <mutex>
 #include <vector>
+#include <atomic>
+#include "cube.h"
+
 
 class Solver {
     public:
         Solver(int maxDepth, bool logging=true);
 
-        void solve(Cube cube, int depth, int lastMove);
+        bool solve(Cube cube, int depth, int lastMove);
         void multisolve(Cube cube);
         
     private:
         static vector<void(Cube::*)(int)> options;
 
+        atomic<bool> solved{false};
+
         mutex printMutex;
         int maxDepth;
         bool logging;
 
-        void tryMove(Cube cube, int i, int n, int depth);
+        bool tryMove(Cube cube, int i, int n, int depth);
 };
 
 void test(int depth, int runs);
