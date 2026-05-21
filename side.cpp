@@ -59,6 +59,4 @@ void Side::print() {
 
 bool Side::completion() {
     return ring == ring_completed;
-
-    return true;
 }
