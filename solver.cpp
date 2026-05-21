@@ -54,6 +54,11 @@ bool Solver::tryMove(Cube cube, int i, int n, int depth) {
     Cube newCube = cube;
     (newCube.*options[i])(n);
 
+    //Check if the cube is in the database, if it is, solves it automatically
+    bool result = patternDatabase.check(newCube);
+    
+    if (!result && (patternDatabase.depthDB >= maxDepth - depth)) return false;
+
     if (newCube.completion()) {
         if (logging) {
             lock_guard<mutex> lock(printMutex);

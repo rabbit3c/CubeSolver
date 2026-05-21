@@ -42,39 +42,38 @@ array<int[4], 6> Cube::nLines = {{
 
 void Cube::up(int n) {
     move(0, sides[0], nLines[0], n);
-    addMove("U", n);
+    addMove(0, n);
 }
 
 void Cube::down(int n) {
     move(1, sides[1], nLines[1], n);
-    addMove("D", n);
+    addMove(1, n);
 }
 
 void Cube::right(int n) {
     move(5, sides[2], nLines[2], n);
-    addMove("R", n);
+    addMove(5, n);
 }
 
 void Cube::left(int n) {
     move(3, sides[3], nLines[3], n);
-    addMove("L", n);
+    addMove(3, n);
 }
 
 void Cube::front(int n) {
     move(2, sides[4], nLines[4], n);
-    addMove("F", n);
+    addMove(2, n);
 }
 
 void Cube::back(int n) {
     move(4, sides[5], nLines[5], n);
-    addMove("B", n);
+    addMove(4, n);
 }
 
-void Cube::addMove(string c, int n) {
-    if (n == 2) c += "2";
-    if (n == 3) c += "'";
+void Cube::addMove(int i, int n) {
+    uint8_t move = i * 10 + n;
 
-    moves.push_back(c);
+    moves.push_back(move);
 }
 
 void Cube::print() {
@@ -86,8 +85,18 @@ void Cube::print() {
 }
 
 void Cube::printMoves() {
-    for (string move : moves) {
-        cout << move << " ";
+    string stringI[6] = {"U", "D", "F", "L", "B", "R"};
+    string stringN[4] = {"", "", "2", "\'"};
+
+    for (uint8_t move : moves) {
+        int i = move / 10;
+        int n = move % 10;
+
+        string str = "";
+        str.append(stringI[i]);
+        str.append(stringN[n]);        
+
+        cout << str << " ";
     }
     cout << endl;
 }
@@ -102,4 +111,12 @@ bool Cube::completion() {
     }
     
     return true;
+}
+
+array<uint32_t, 6> Cube::toKey() {
+    array<uint32_t, 6> key;
+    for (int i = 0; i < 6; i++) {
+        key[i] = cube[i].ring;
+    }
+    return key;
 }

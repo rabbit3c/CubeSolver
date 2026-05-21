@@ -6,6 +6,11 @@
 
 class Side {
     public:
+        uint32_t ring;
+        //0 1 2   00 03 06
+        //7 - 3   21 -- 09
+        //6 5 4   18 15 12
+
         Side() = default;
 
         Side(color c);
@@ -21,11 +26,7 @@ class Side {
         void print();
         
     private:
-        uint32_t center;
-        uint32_t ring;
-        //0 1 2   00 03 06
-        //7 - 3   21 -- 09
-        //6 5 4   18 15 12
+        uint8_t center;
 
         uint32_t ring_completed;
 

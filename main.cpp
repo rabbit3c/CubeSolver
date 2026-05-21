@@ -7,12 +7,12 @@
 using namespace std;
 
 int main() {
-    test(6, 10);
-    return 0;
+    //test(11, 10);
+    //return 0;
 
     SetConsoleOutputCP(CP_UTF8);
 
-    int depth = 7;
+    int depth = 11;
 
     Cube cube = Cube();
     Solver solver = Solver(depth);

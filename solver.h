@@ -3,7 +3,7 @@
 #include <vector>
 #include <atomic>
 #include "cube.h"
-
+#include "pattern_database.h"
 
 class Solver {
     public:
@@ -13,6 +13,8 @@ class Solver {
         void multisolve(Cube cube);
         
     private:
+        PatternDatabase patternDatabase = PatternDatabase(5);
+
         static vector<void(Cube::*)(int)> options;
 
         atomic<bool> solved{false};

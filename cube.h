@@ -6,6 +6,9 @@
 
 class Cube {
     public:
+        array<Side, 6> cube;
+        vector<uint8_t> moves;
+
         Cube();
         
         void up(int n = 1);
@@ -22,13 +25,12 @@ class Cube {
 
         bool completion();
 
-    private:
-        array<Side, 6> cube;
-        vector<string> moves;
+        array<uint32_t, 6> toKey();
 
+    private:
         static array<int[4], 6> sides;
         static array<int[4], 6> nLines;
 
         void move(int face, int sides[4], int nLines[4], int n);
-        void addMove(string c, int n);
+        void addMove(int c, int n);
 };
