@@ -5,10 +5,6 @@
 #include "solver.h"
 #include "scrambler.h"
 
-vector<void(Cube::*)(int)> Solver::options = {
-    &Cube::up, &Cube::down, &Cube::right, &Cube::left, &Cube::front, &Cube::back
-};
-
 Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {}
 
 void Solver::multisolve(Cube cube) {
@@ -16,7 +12,7 @@ void Solver::multisolve(Cube cube) {
     int depth = 1;
 
     vector<thread> threads;
-    for (int i = 0; i < options.size(); i++) {
+    for (int i = 0; i < 6; i++) {
         for (int n = 1; n <= 3; n++) {
             threads.push_back(thread([this, cube, i, n, depth]() {
                 tryMove(cube, i, n, depth);
@@ -34,9 +30,11 @@ bool Solver::solve(Cube cube, int depth, int lastMove) {
     depth += 1;
     if (depth > maxDepth) return false;
 
-    for (int i = 0; i < options.size(); i++) {
+    for (int i = 0; i < 6; i++) {
         if (i == lastMove) continue;
-        if (i + 1 == lastMove && i % 2 == 0) continue;
+        if (i == 1 && lastMove == 0) continue;
+        if (i == 5 && lastMove == 3) continue;
+        if (i == 4 && lastMove == 2) continue;
 
         for (int n = 1; n <= 3; n++) {
             bool solved = tryMove(cube, i, n, depth);
@@ -52,7 +50,7 @@ bool Solver::tryMove(Cube cube, int i, int n, int depth) {
     if (solved) return false;
 
     Cube newCube = cube;
-    (newCube.*options[i])(n);
+    newCube.move(i, n);
 
     //Check if the cube is in the database, if it is, solves it automatically
     bool result = patternDatabase.check(newCube);

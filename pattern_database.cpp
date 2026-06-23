@@ -1,9 +1,5 @@
 #include "pattern_database.h"
 
-vector<void(Cube::*)(int)> PatternDatabase::options = {
-    &Cube::up, &Cube::down, &Cube::right, &Cube::left, &Cube::front, &Cube::back
-};
-
 PatternDatabase::PatternDatabase(int depth) {
     cout << "Generating Pattern Database..." << endl;
 
@@ -20,13 +16,15 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
     depth -= 1;
     if (depth < 0) return;
 
-    for (int i = 0; i < options.size(); i++) {
+    for (int i = 0; i < 6; i++) {
         if (i == lastMove) continue;
-        if (i + 1 == lastMove && i % 2 == 0) continue;
+        if (i == 1 && lastMove == 0) continue;
+        if (i == 5 && lastMove == 3) continue;
+        if (i == 4 && lastMove == 2) continue;
 
         for (int n = 1; n <= 3; n++) {
             Cube newCube = cube;
-            (newCube.*options[i])(n);
+            newCube.move(i, n);
             
             addEntry(newCube);
 

@@ -11,12 +11,7 @@ class Cube {
 
         Cube();
         
-        void up(int n = 1);
-        void down(int n = 1);
-        void right(int n = 1);
-        void left(int n = 1);
-        void front(int n = 1);
-        void back(int n = 1);
+        void move(int face, int n);
 
         void print();
         void printMoves();
@@ -31,6 +26,5 @@ class Cube {
         static array<int[4], 6> sides;
         static array<int[4], 6> nLines;
 
-        void move(int face, int sides[4], int nLines[4], int n);
         void addMove(int c, int n);
 };

@@ -31,22 +31,22 @@ void executeMoves(Cube &cube, string strMoves) {
 
         switch (move[0]) {
             case 'U':
-                cube.up(n);
+                cube.move(0, n);
                 break;
             case 'D':
-                cube.down(n);
+                cube.move(1, n);
                 break;
             case 'R':
-                cube.right(n);
+                cube.move(5, n);
                 break;
             case 'L':
-                cube.left(n);
+                cube.move(3, n);
                 break;
             case 'F':
-                cube.front(n);
+                cube.move(2, n);
                 break;
             case 'B':
-                cube.back(n);
+                cube.move(4, n);
                 break;
         }
     }
@@ -57,10 +57,6 @@ void scramble(Cube &cube, int numMoves, bool logging) {
     uniform_int_distribution<int> dist6(0, 5);
     uniform_int_distribution<int> dist3(1, 3);
 
-    vector<void(Cube::*)(int)> options = {
-        &Cube::up, &Cube::down, &Cube::right, &Cube::left, &Cube::front, &Cube::back
-    };
-
     int lastI;
     for (int _ = 0; _ < numMoves; _++) {
         int i = dist6(rng);
@@ -69,7 +65,7 @@ void scramble(Cube &cube, int numMoves, bool logging) {
 
         int n = dist3(rng);
         
-        (cube.*options[i])(n);
+        cube.move(i, n);
     }
 
     if (logging) {
