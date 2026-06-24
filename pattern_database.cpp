@@ -1,20 +1,31 @@
-#include "pattern_database.h"
 #include <thread>
 #include <mutex>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include "pattern_database.h"
 
 PatternDatabase::PatternDatabase(int depth) {
-    cout << "Generating Pattern Database..." << endl;
-
     depthDB = depth;
+
+    cout << "Loading Pattern Database..." << endl;
+
+    bool result = load();
+    if (result) {
+        cout << "Loaded Database" << endl << endl;
+        return;
+    }
+
+    cout << "Database not found" << endl << endl;
+    cout << "Generating Pattern Database..." << endl;
 
     Cube solvedCube = Cube();
     addEntry(solvedCube);
 
     multiFindChildren(solvedCube);
+    save();
 
-    cout << "Pattern Database generated" << endl;
-    //cout << size() << " Entries" << endl;
-    cout << endl;
+    cout << "Pattern Database generated" << endl << endl;
 }
 
 void PatternDatabase::multiFindChildren(Cube cube) {
@@ -26,9 +37,9 @@ void PatternDatabase::multiFindChildren(Cube cube) {
                 newCube.move(i, n);
 
                 addEntry(newCube);
-                
+
                 findChildren(newCube, depthDB - 1, i);
-            }));
+                }));
         }
     }
 
@@ -51,7 +62,7 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
         for (int n = 1; n <= 3; n++) {
             Cube newCube = cube;
             newCube.move(i, n);
-            
+
             addEntry(newCube);
 
             findChildren(newCube, depth, i);
@@ -59,19 +70,23 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
     }
 }
 
+int PatternDatabase::getShard(const CubeKey& key) {
+    return hash<CubeKey>{}(key) % numShards;
+}
+
 void PatternDatabase::addEntry(Cube cube) {
     CubeKey key = cube.toKey();
     const int shard = getShard(key);
 
-    lock_guard<mutex> lock(shard_mutexes[shard]);
-    db_shards[shard][key] = cube.moves;
+    lock_guard<mutex> lock(shardMutexes[shard]);
+    dbShards[shard][key] = cube.moves;
 }
 
 bool PatternDatabase::check(Cube& cube) {
     CubeKey key = cube.toKey();
     const int shard = getShard(key);
-    
-    auto& db = db_shards[shard];
+
+    auto& db = dbShards[shard];
 
     if (!db.count(key)) return false;
 
@@ -82,7 +97,7 @@ bool PatternDatabase::check(Cube& cube) {
 int PatternDatabase::size() {
     int totalSize = 0;
     int n = 0;
-    for (auto shard : db_shards) {
+    for (auto shard : dbShards) {
         //cout << "Shard " << n << ": " << shard.size() << endl;
         totalSize += shard.size();
         n++;
@@ -95,10 +110,57 @@ void PatternDatabase::solve(Cube& cube, vector<uint8_t> moves) {
         uint8_t move = moves[j];
         const int i = move / 10;
         const int n = move % 10;
-        
         move = i * 10 + (4 - n);
         cube.moves.push_back(move);
     }
 
     cube.cube = Cube().cube;
 }
+
+void PatternDatabase::save() {
+    string path = "databases/database_d" + to_string(depthDB);
+    filesystem::create_directories(path);
+
+    for (int i = 0; i < numShards; i++) {
+        ofstream file(path + "/shard_" + to_string(i) + ".bin", ios::binary);
+
+        for (auto& [key, moves] : dbShards[i]) {
+            file.write((char*)key.data(), sizeof(CubeKey));
+            size_t movesSize = moves.size();
+            file.write((char*)&movesSize, sizeof(movesSize));
+            file.write((char*)moves.data(), movesSize);
+        }
+
+        file.close();
+    }
+}
+
+bool PatternDatabase::load() {
+    string path = "databases/database_d" + to_string(depthDB);
+    if (!filesystem::is_directory(path)) return false;
+
+    vector<thread> threads;
+    for (int i = 0; i < numShards; i++) {
+        threads.push_back(thread([this, i, path]() {
+            ifstream file(path + "/shard_" + to_string(i) + ".bin", ios::binary);
+            while (file.peek() != EOF) {
+                CubeKey key;
+                file.read((char*)key.data(), sizeof(CubeKey));
+
+                size_t movesSize;
+                file.read((char*)&movesSize, sizeof(movesSize));
+                vector<uint8_t> moves(movesSize);
+                file.read((char*)moves.data(), movesSize);
+
+                dbShards[i][key] = move(moves);
+            }
+            }));
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    return true;
+}
+

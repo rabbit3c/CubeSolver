@@ -20,27 +20,28 @@ namespace std {
 };
 
 class PatternDatabase {
-    public:
-        int depthDB;
+public:
+    int depthDB;
 
-        PatternDatabase(int depth);
+    PatternDatabase(int depth);
 
-        bool check(Cube& cube);
-        
-        int size();
+    bool check(Cube& cube);
 
-    private:
-        static const int num_shards = 32;
-        unordered_map<CubeKey, vector<uint8_t>> db_shards[num_shards];
-        mutex shard_mutexes[num_shards];
+    int size();
 
-        int getShard(const CubeKey& key) {
-            return hash<CubeKey>{}(key) % num_shards;
-        }
+private:
+    static const int numShards = 32;
+    unordered_map<CubeKey, vector<uint8_t>> dbShards[numShards];
+    mutex shardMutexes[numShards];
 
-        void multiFindChildren(Cube cube);
-        void findChildren(Cube cube, int depth, int lastMove);
-        void addEntry(Cube cube);
+    int getShard(const CubeKey& key);
 
-        void solve(Cube& cube, vector<uint8_t> moves);
+    void multiFindChildren(Cube cube);
+    void findChildren(Cube cube, int depth, int lastMove);
+    void addEntry(Cube cube);
+
+    void solve(Cube& cube, vector<uint8_t> moves);
+
+    void save();
+    bool load();
 };
