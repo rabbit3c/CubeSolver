@@ -61,7 +61,7 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
 
 void PatternDatabase::addEntry(Cube cube) {
     CubeKey key = cube.toKey();
-    int shard = getShard(key);
+    const int shard = getShard(key);
 
     lock_guard<mutex> lock(shard_mutexes[shard]);
     db_shards[shard][key] = cube.moves;
@@ -69,7 +69,8 @@ void PatternDatabase::addEntry(Cube cube) {
 
 bool PatternDatabase::check(Cube& cube) {
     CubeKey key = cube.toKey();
-    int shard = getShard(key);
+    const int shard = getShard(key);
+    
     auto& db = db_shards[shard];
 
     if (!db.count(key)) return false;
@@ -92,8 +93,8 @@ int PatternDatabase::size() {
 void PatternDatabase::solve(Cube& cube, vector<uint8_t> moves) {
     for (int j = moves.size() - 1; j >= 0; j--) {
         uint8_t move = moves[j];
-        int i = move / 10;
-        int n = move % 10;
+        const int i = move / 10;
+        const int n = move % 10;
         
         move = i * 10 + (4 - n);
         cube.moves.push_back(move);

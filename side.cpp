@@ -23,15 +23,15 @@ void Side::rotate(int n) {
 }
 
 uint16_t Side::getLine(int n) {
-    int shift = n * 6;
+    const int shift = n * 6;
     uint32_t line = (ring >> shift) & line_mask;
     if (n == 3) line |= (ring & square_mask) << 6; 
     return line;
 }
 
 void Side::replaceLine(int n, int line) {
-    int shift = n * 6;
-    uint32_t mask = line_mask << shift; 
+    const int shift = n * 6;
+    const uint32_t mask = line_mask << shift; 
     ring = (ring & ~mask) | (line << shift);
     if (n == 3) ring = (ring & ~square_mask) | ((line >> 6) & square_mask);
     ring &= ring_mask;
@@ -39,7 +39,7 @@ void Side::replaceLine(int n, int line) {
 
 void Side::print() {
     string stringSide = "";
-    int order[9] = {0, 1, 2, 7, 0, 3, 6, 5, 4};
+    const int order[9] = {0, 1, 2, 7, 0, 3, 6, 5, 4};
 
     for (int i = 0; i < 9; i++) {
         if (i == 4) {

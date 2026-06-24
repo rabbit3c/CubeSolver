@@ -9,7 +9,7 @@ Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging
 
 void Solver::multisolve(Cube cube) {
     solved = false;
-    int depth = 1;
+    int depth = maxDepth - 1;
 
     vector<thread> threads;
     for (int i = 0; i < 6; i++) {
@@ -27,8 +27,8 @@ void Solver::multisolve(Cube cube) {
 
 
 bool Solver::solve(Cube cube, int depth, int lastMove) {
-    depth += 1;
-    if (depth > maxDepth) return false;
+    depth -= 1;
+    if (depth < 0) return false;
 
     for (int i = 0; i < 6; i++) {
         if (i == lastMove) continue;
@@ -37,8 +37,10 @@ bool Solver::solve(Cube cube, int depth, int lastMove) {
         if (i == 4 && lastMove == 2) continue;
 
         for (int n = 1; n <= 3; n++) {
-            bool solved = tryMove(cube, i, n, depth);
-            if (solved) return true;
+            if (solved) return false;
+
+            const bool result = tryMove(cube, i, n, depth);
+            if (result) return true;
         }
     }
 
@@ -52,10 +54,8 @@ bool Solver::tryMove(Cube cube, int i, int n, int depth) {
     Cube newCube = cube;
     newCube.move(i, n);
 
-    //Check if the cube is in the database, if it is, solves it automatically
-    bool result = patternDatabase.check(newCube);
-    
-    if (!result && (patternDatabase.depthDB >= maxDepth - depth)) return false;
+    //Check if the cube is in the database, if it is, solve it automatically
+    patternDatabase.check(newCube);
 
     if (newCube.completion()) {
         if (logging) {
@@ -68,6 +68,8 @@ bool Solver::tryMove(Cube cube, int i, int n, int depth) {
         solved = true;
         return true;
     }
+    
+    if (patternDatabase.depthDB >= depth) return false;
     
     return solve(newCube, depth, i);
 }

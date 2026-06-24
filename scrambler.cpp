@@ -26,8 +26,8 @@ void executeMoves(Cube &cube, string strMoves) {
     vector<string> moves = split(strMoves);
 
     for (string move : moves) {
-        char type = move[0];
-        int n = parse(move);
+        const char type = move[0];
+        const int n = parse(move);
 
         switch (move[0]) {
             case 'U':
@@ -63,7 +63,7 @@ void scramble(Cube &cube, int numMoves, bool logging) {
         while (i == lastI) i = dist6(rng);
         lastI = i;
 
-        int n = dist3(rng);
+        const int n = dist3(rng);
         
         cube.move(i, n);
     }

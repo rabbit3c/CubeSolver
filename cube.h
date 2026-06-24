@@ -23,8 +23,8 @@ class Cube {
         array<uint32_t, 6> toKey();
 
     private:
-        static array<int[4], 6> sides;
-        static array<int[4], 6> nLines;
+        static const array<int[4], 6> sides;
+        static const array<int[4], 6> nLines;
 
         void addMove(int c, int n);
 };

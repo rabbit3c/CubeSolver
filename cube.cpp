@@ -24,7 +24,7 @@ void Cube::move(int face, int n) {
     addMove(face, n);
 }
 
-array<int[4], 6> Cube::sides = {{
+const array<int[4], 6> Cube::sides = {{
     {2, 3, 4, 5},
     {5, 4, 3, 2},
     {0, 5, 1, 3},
@@ -33,7 +33,7 @@ array<int[4], 6> Cube::sides = {{
     {1, 2, 0, 4},
 }};
 
-array<int[4], 6> Cube::nLines = {{
+const array<int[4], 6> Cube::nLines = {{
     {0, 0, 0, 0},
     {2, 2, 2, 2},
     {2, 3, 0, 1},
