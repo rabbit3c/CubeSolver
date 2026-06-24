@@ -1,4 +1,6 @@
 #include "pattern_database.h"
+#include <thread>
+#include <mutex>
 
 PatternDatabase::PatternDatabase(int depth) {
     cout << "Generating Pattern Database..." << endl;
@@ -7,10 +9,34 @@ PatternDatabase::PatternDatabase(int depth) {
 
     Cube solvedCube = Cube();
     addEntry(solvedCube);
-    findChildren(solvedCube, depth, -1);
 
-    cout << "Pattern Database generated" << endl << endl;
+    multiFindChildren(solvedCube);
+
+    cout << "Pattern Database generated" << endl;
+    //cout << size() << " Entries" << endl;
+    cout << endl;
 }
+
+void PatternDatabase::multiFindChildren(Cube cube) {
+    vector<thread> threads;
+    for (int i = 0; i < 6; i++) {
+        for (int n = 1; n <= 3; n++) {
+            threads.push_back(thread([this, cube, i, n]() {
+                Cube newCube = cube;
+                newCube.move(i, n);
+
+                addEntry(newCube);
+                
+                findChildren(newCube, depthDB - 1, i);
+            }));
+        }
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+}
+
 
 void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
     depth -= 1;
@@ -34,18 +60,36 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
 }
 
 void PatternDatabase::addEntry(Cube cube) {
-    db[cube.toKey()] = cube.moves;
+    CubeKey key = cube.toKey();
+    int shard = getShard(key);
+
+    lock_guard<mutex> lock(shard_mutexes[shard]);
+    db_shards[shard][key] = cube.moves;
 }
 
 bool PatternDatabase::check(Cube& cube) {
-    if (!db.count(cube.toKey())) return false;
+    CubeKey key = cube.toKey();
+    int shard = getShard(key);
+    auto& db = db_shards[shard];
 
-    solve(cube);
+    if (!db.count(key)) return false;
+
+    solve(cube, db[key]);
     return true;
 }
 
-void PatternDatabase::solve(Cube& cube) {
-    vector<uint8_t> moves = db[cube.toKey()];
+int PatternDatabase::size() {
+    int totalSize = 0;
+    int n = 0;
+    for (auto shard : db_shards) {
+        //cout << "Shard " << n << ": " << shard.size() << endl;
+        totalSize += shard.size();
+        n++;
+    }
+    return totalSize;
+}
+
+void PatternDatabase::solve(Cube& cube, vector<uint8_t> moves) {
     for (int j = moves.size() - 1; j >= 0; j--) {
         uint8_t move = moves[j];
         int i = move / 10;

@@ -13,9 +13,7 @@ class Solver {
         void multisolve(Cube cube);
         
     private:
-        PatternDatabase patternDatabase = PatternDatabase(5);
-
-        static vector<void(Cube::*)(int)> options;
+        PatternDatabase patternDatabase = PatternDatabase(6);
 
         atomic<bool> solved{false};
 

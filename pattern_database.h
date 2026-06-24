@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <mutex>
 #include <vector>
 #include "cube.h"
 
@@ -24,15 +25,22 @@ class PatternDatabase {
 
         PatternDatabase(int depth);
 
-        bool check(Cube& cube);        
+        bool check(Cube& cube);
+        
+        int size();
 
     private:
-        unordered_map<CubeKey, vector<uint8_t>> db;
+        static const int num_shards = 32;
+        unordered_map<CubeKey, vector<uint8_t>> db_shards[num_shards];
+        mutex shard_mutexes[num_shards];
 
-        static vector<void(Cube::*)(int)> options;
+        int getShard(const CubeKey& key) {
+            return hash<CubeKey>{}(key) % num_shards;
+        }
 
+        void multiFindChildren(Cube cube);
         void findChildren(Cube cube, int depth, int lastMove);
         void addEntry(Cube cube);
 
-        void solve(Cube& cube);
+        void solve(Cube& cube, vector<uint8_t> moves);
 };
