@@ -5,26 +5,29 @@
 #include <vector>
 
 class Cube {
-    public:
-        array<Side, 6> cube;
-        vector<uint8_t> moves;
+public:
+    array<Side, 6> cube;
+    vector<uint8_t> moves;
 
-        Cube();
-        
-        void move(int face, int n);
+    uint8_t distance = 0;
 
-        void print();
-        void printMoves();
+    Cube();
 
-        void clearMoves();
+    void move(int face, int n);
 
-        bool completion();
+    void print();
+    void printMoves();
 
-        array<uint32_t, 6> toKey();
+    void clearMoves();
 
-    private:
-        static const array<int[4], 6> sides;
-        static const array<int[4], 6> nLines;
+    bool completion();
 
-        void addMove(int c, int n);
+    array<uint32_t, 6> toKey();
+    size_t toHash();
+
+private:
+    static const array<int[4], 6> sides;
+    static const array<int[4], 6> nLines;
+
+    void addMove(int c, int n);
 };

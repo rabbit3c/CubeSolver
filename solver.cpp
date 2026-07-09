@@ -16,7 +16,7 @@ void Solver::multisolve(Cube cube) {
         for (int n = 1; n <= 3; n++) {
             threads.push_back(thread([this, cube, i, n, depth]() {
                 tryMove(cube, i, n, depth);
-            }));
+                }));
         }
     }
 
@@ -37,8 +37,6 @@ bool Solver::solve(Cube cube, int depth, int lastMove) {
         if (i == 4 && lastMove == 2) continue;
 
         for (int n = 1; n <= 3; n++) {
-            if (solved) return false;
-
             const bool result = tryMove(cube, i, n, depth);
             if (result) return true;
         }
@@ -49,13 +47,19 @@ bool Solver::solve(Cube cube, int depth, int lastMove) {
 
 
 bool Solver::tryMove(Cube cube, int i, int n, int depth) {
-    if (solved) return false;
-
     Cube newCube = cube;
     newCube.move(i, n);
 
-    //Check if the cube is in the database, if it is, solve it automatically
-    patternDatabase.check(newCube);
+    //Check if the cube is in the database
+    int result = patternDatabase.check(newCube);
+    if (result != -1) {
+        if (!solved) solved = true;
+
+        if (result < cube.distance) cube.distance = result;
+        else return false;
+    }
+    else if (solved) return false;
+    else if (patternDatabase.depthDB >= depth) return false;
 
     if (newCube.completion()) {
         if (logging) {
@@ -64,13 +68,10 @@ bool Solver::tryMove(Cube cube, int i, int n, int depth) {
             cout << "Solution: " << endl;
             newCube.printMoves();
         }
-        
-        solved = true;
+
         return true;
     }
-    
-    if (patternDatabase.depthDB >= depth) return false;
-    
+
     return solve(newCube, depth, i);
 }
 
@@ -95,7 +96,7 @@ void test(int depth, int runs) {
     }
 
     auto end = chrono::system_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end-start);
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
     cout << "Done!" << endl;
 
     cout << endl;

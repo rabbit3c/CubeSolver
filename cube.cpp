@@ -22,25 +22,26 @@ void Cube::move(int face, int n) {
     }
 
     addMove(face, n);
+    distance++;
 }
 
-const array<int[4], 6> Cube::sides = {{
+const array<int[4], 6> Cube::sides = { {
     {2, 3, 4, 5},
     {5, 4, 3, 2},
     {0, 5, 1, 3},
     {0, 2, 1, 4},
     {5, 0, 3, 1},
     {1, 2, 0, 4},
-}};
+} };
 
-const array<int[4], 6> Cube::nLines = {{
+const array<int[4], 6> Cube::nLines = { {
     {0, 0, 0, 0},
     {2, 2, 2, 2},
     {2, 3, 0, 1},
     {3, 3, 3, 1},
     {1, 0, 3, 2},
     {1, 1, 1, 3},
-}};
+} };
 
 void Cube::addMove(int i, int n) {
     uint8_t move = i * 10 + n;
@@ -57,8 +58,8 @@ void Cube::print() {
 }
 
 void Cube::printMoves() {
-    string stringI[6] = {"U", "D", "F", "L", "B", "R"};
-    string stringN[4] = {"", "", "2", "\'"};
+    string stringI[6] = { "U", "D", "F", "L", "B", "R" };
+    string stringN[4] = { "", "", "2", "\'" };
 
     for (uint8_t move : moves) {
         int i = move / 10;
@@ -66,7 +67,7 @@ void Cube::printMoves() {
 
         string str = "";
         str.append(stringI[i]);
-        str.append(stringN[n]);        
+        str.append(stringN[n]);
 
         cout << str << " ";
     }
@@ -81,7 +82,7 @@ bool Cube::completion() {
     for (Side side : cube) {
         if (!side.completion()) return false;
     }
-    
+
     return true;
 }
 
@@ -91,4 +92,13 @@ array<uint32_t, 6> Cube::toKey() {
         key[i] = cube[i].ring;
     }
     return key;
+}
+
+size_t Cube::toHash() {
+    size_t seed = 0;
+
+    auto key = toKey();
+    for (uint32_t v : key)
+        seed ^= std::hash<uint32_t>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    return seed;
 }

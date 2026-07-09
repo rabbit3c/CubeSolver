@@ -6,7 +6,7 @@
 
 using namespace std;
 
-//TODO: Minimise storage space database (remove moves to solve, repalce by distance or nothing)
+//TODO: Evaluate different cube states
 
 int main() {
     //test(13, 10);
@@ -14,7 +14,7 @@ int main() {
 
     SetConsoleOutputCP(CP_UTF8);
 
-    const int depth = 12;
+    const int depth = 13;
 
     Cube cube = Cube();
     Solver solver = Solver(depth);

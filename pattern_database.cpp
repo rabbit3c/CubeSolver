@@ -70,28 +70,27 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
     }
 }
 
-int PatternDatabase::getShard(const CubeKey& key) {
-    return hash<CubeKey>{}(key) % numShards;
+int PatternDatabase::getShard(const size_t& hash) {
+    return hash % numShards;
 }
 
 void PatternDatabase::addEntry(Cube cube) {
-    CubeKey key = cube.toKey();
-    const int shard = getShard(key);
+    size_t hash = cube.toHash();
+    const int shard = getShard(hash);
 
     lock_guard<mutex> lock(shardMutexes[shard]);
-    dbShards[shard][key] = cube.moves;
+    dbShards[shard][hash] = cube.distance;
 }
 
-bool PatternDatabase::check(Cube& cube) {
-    CubeKey key = cube.toKey();
-    const int shard = getShard(key);
+int PatternDatabase::check(Cube& cube) {
+    size_t hash = cube.toHash();
+    const int shard = getShard(hash);
 
     auto& db = dbShards[shard];
 
-    if (!db.count(key)) return false;
+    if (!db.count(hash)) return -1;
 
-    solve(cube, db[key]);
-    return true;
+    return db[hash];
 }
 
 int PatternDatabase::size() {
@@ -124,11 +123,9 @@ void PatternDatabase::save() {
     for (int i = 0; i < numShards; i++) {
         ofstream file(path + "/shard_" + to_string(i) + ".bin", ios::binary);
 
-        for (auto& [key, moves] : dbShards[i]) {
-            file.write((char*)key.data(), sizeof(CubeKey));
-            size_t movesSize = moves.size();
-            file.write((char*)&movesSize, sizeof(movesSize));
-            file.write((char*)moves.data(), movesSize);
+        for (auto& [key, distance] : dbShards[i]) {
+            file.write((char*)&key, sizeof(size_t));
+            file.write((char*)&distance, sizeof(distance));
         }
 
         file.close();
@@ -144,15 +141,13 @@ bool PatternDatabase::load() {
         threads.push_back(thread([this, i, path]() {
             ifstream file(path + "/shard_" + to_string(i) + ".bin", ios::binary);
             while (file.peek() != EOF) {
-                CubeKey key;
-                file.read((char*)key.data(), sizeof(CubeKey));
+                size_t key;
+                file.read((char*)&key, sizeof(size_t));
 
-                size_t movesSize;
-                file.read((char*)&movesSize, sizeof(movesSize));
-                vector<uint8_t> moves(movesSize);
-                file.read((char*)moves.data(), movesSize);
+                uint8_t distance;
+                file.read((char*)&distance, sizeof(distance));
 
-                dbShards[i][key] = move(moves);
+                dbShards[i][key] = distance;
             }
             }));
     }
