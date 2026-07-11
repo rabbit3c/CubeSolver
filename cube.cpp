@@ -1,5 +1,6 @@
 #include "cube.h"
 #include <array>
+#include <cmath>
 
 Cube::Cube() {
     for (int i = 0; i < cube.size(); i++) {
@@ -84,6 +85,14 @@ bool Cube::completion() {
     }
 
     return true;
+}
+
+float Cube::h() {
+    float d = 0;
+    for (Side side : cube) {
+        d += side.h();
+    }
+    return pow(d / 10, 1.8);
 }
 
 array<uint32_t, 6> Cube::toKey() {

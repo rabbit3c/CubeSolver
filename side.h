@@ -5,32 +5,34 @@
 #include "colors.h"
 
 class Side {
-    public:
-        uint32_t ring;
-        //0 1 2   00 03 06
-        //7 - 3   21 -- 09
-        //6 5 4   18 15 12
+public:
+    uint32_t ring;
+    //0 1 2   00 03 06
+    //7 - 3   21 -- 09
+    //6 5 4   18 15 12
 
-        Side() = default;
+    Side() = default;
 
-        Side(color c);
+    Side(color c);
 
-        void rotate(int n);
+    void rotate(int n);
 
-        uint16_t getLine(int n);
+    uint16_t getLine(int n);
 
-        void replaceLine(int n, int line);
+    void replaceLine(int n, int line);
 
-        bool completion();
+    bool completion();
 
-        void print();
-        
-    private:
-        uint8_t center;
+    int h();
 
-        uint32_t ring_completed;
+    void print();
 
-        static uint8_t square_mask;
-        static uint16_t line_mask;
-        static uint32_t ring_mask;
+private:
+    uint8_t center;
+
+    uint32_t ring_completed;
+
+    static uint8_t square_mask;
+    static uint16_t line_mask;
+    static uint32_t ring_mask;
 };

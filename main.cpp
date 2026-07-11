@@ -21,8 +21,10 @@ int main() {
 
     scramble(cube, depth);
     //cube.print();
+    //float h = cube.h();
+    //cout << "H: " << h << endl;
 
-    cout << endl;
+    //cout << endl;
 
     solver.multisolve(cube);
     _exit(0);

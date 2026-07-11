@@ -22,7 +22,7 @@ vector<string> split(string str) {
     return result;
 }
 
-void executeMoves(Cube &cube, string strMoves) {
+void executeMoves(Cube& cube, string strMoves) {
     vector<string> moves = split(strMoves);
 
     for (string move : moves) {
@@ -30,29 +30,29 @@ void executeMoves(Cube &cube, string strMoves) {
         const int n = parse(move);
 
         switch (move[0]) {
-            case 'U':
-                cube.move(0, n);
-                break;
-            case 'D':
-                cube.move(1, n);
-                break;
-            case 'R':
-                cube.move(5, n);
-                break;
-            case 'L':
-                cube.move(3, n);
-                break;
-            case 'F':
-                cube.move(2, n);
-                break;
-            case 'B':
-                cube.move(4, n);
-                break;
+        case 'U':
+            cube.move(0, n);
+            break;
+        case 'D':
+            cube.move(1, n);
+            break;
+        case 'R':
+            cube.move(5, n);
+            break;
+        case 'L':
+            cube.move(3, n);
+            break;
+        case 'F':
+            cube.move(2, n);
+            break;
+        case 'B':
+            cube.move(4, n);
+            break;
         }
     }
 }
 
-void scramble(Cube &cube, int numMoves, bool logging) {
+void scramble(Cube& cube, int numMoves, bool logging) {
     mt19937 rng(random_device{}());
     uniform_int_distribution<int> dist6(0, 5);
     uniform_int_distribution<int> dist3(1, 3);
@@ -64,8 +64,10 @@ void scramble(Cube &cube, int numMoves, bool logging) {
         lastI = i;
 
         const int n = dist3(rng);
-        
+
         cube.move(i, n);
+        //float h = cube.h();
+        //cout << "H: " << h << endl;
     }
 
     if (logging) {

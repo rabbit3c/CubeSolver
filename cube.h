@@ -22,6 +22,8 @@ public:
 
     bool completion();
 
+    float h();
+
     array<uint32_t, 6> toKey();
     size_t toHash();
 

@@ -25,13 +25,13 @@ void Side::rotate(int n) {
 uint16_t Side::getLine(int n) {
     const int shift = n * 6;
     uint32_t line = (ring >> shift) & line_mask;
-    if (n == 3) line |= (ring & square_mask) << 6; 
+    if (n == 3) line |= (ring & square_mask) << 6;
     return line;
 }
 
 void Side::replaceLine(int n, int line) {
     const int shift = n * 6;
-    const uint32_t mask = line_mask << shift; 
+    const uint32_t mask = line_mask << shift;
     ring = (ring & ~mask) | (line << shift);
     if (n == 3) ring = (ring & ~square_mask) | ((line >> 6) & square_mask);
     ring &= ring_mask;
@@ -39,7 +39,7 @@ void Side::replaceLine(int n, int line) {
 
 void Side::print() {
     string stringSide = "";
-    const int order[9] = {0, 1, 2, 7, 0, 3, 6, 5, 4};
+    const int order[9] = { 0, 1, 2, 7, 0, 3, 6, 5, 4 };
 
     for (int i = 0; i < 9; i++) {
         if (i == 4) {
@@ -59,4 +59,13 @@ void Side::print() {
 
 bool Side::completion() {
     return ring == ring_completed;
+}
+
+int Side::h() {
+    int d = 8;
+    for (int i = 0; i < 8; i++) {
+        uint8_t square = (ring >> (i * 3)) & square_mask;
+        if (square == center) d--;
+    }
+    return d;
 }
