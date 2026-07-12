@@ -13,7 +13,7 @@ public:
     void multisolve(Cube cube);
 
 private:
-    PatternDatabase patternDatabase = PatternDatabase(6);
+    PatternDatabase patternDatabase = PatternDatabase(7);
 
     atomic<bool> solved{ false };
 

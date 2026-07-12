@@ -6,7 +6,8 @@
 
 using namespace std;
 
-//TODO: Evaluate different cube states
+//TODO: Add maximum f value to IDA*. If no success, value increases.
+//TODO: Change cube representation from sides and colors to numbers. One uint64_t for the edges, one for the corners. Including permutations
 
 int main() {
     //test(13, 10);

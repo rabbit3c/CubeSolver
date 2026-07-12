@@ -26,6 +26,7 @@ PatternDatabase::PatternDatabase(int depth) {
     save();
 
     cout << "Pattern Database generated" << endl << endl;
+    cout << "Collision: " << collisions << endl << endl;
 }
 
 void PatternDatabase::multiFindChildren(Cube cube) {
@@ -63,7 +64,8 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
             Cube newCube = cube;
             newCube.move(i, n);
 
-            addEntry(newCube);
+            const bool collision = addEntry(newCube);
+            if (collision) continue;
 
             findChildren(newCube, depth, i);
         }
@@ -74,12 +76,23 @@ int PatternDatabase::getShard(const size_t& hash) {
     return hash % numShards;
 }
 
-void PatternDatabase::addEntry(Cube cube) {
+bool PatternDatabase::addEntry(Cube cube) {
     size_t hash = cube.toHash();
     const int shard = getShard(hash);
 
     lock_guard<mutex> lock(shardMutexes[shard]);
+
+    if (!dbShards[shard].count(hash)) {
+        dbShards[shard][hash] = cube.distance;
+        return false;
+    }
+
+    collisions++;
+
+    if (dbShards[shard][hash] <= cube.distance) return true;
+
     dbShards[shard][hash] = cube.distance;
+    return false;
 }
 
 int PatternDatabase::check(Cube& cube) {

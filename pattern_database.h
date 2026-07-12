@@ -19,11 +19,13 @@ private:
     unordered_map<size_t, uint8_t> dbShards[numShards];
     mutex shardMutexes[numShards];
 
+    int collisions = 0;
+
     int getShard(const size_t& hash);
 
     void multiFindChildren(Cube cube);
     void findChildren(Cube cube, int depth, int lastMove);
-    void addEntry(Cube cube);
+    bool addEntry(Cube cube);
 
     void solve(Cube& cube, vector<uint8_t> moves);
 
