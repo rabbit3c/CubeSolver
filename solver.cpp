@@ -4,18 +4,24 @@
 #include "cube.h"
 #include "solver.h"
 #include "scrambler.h"
+#include <algorithm>
 
 Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {}
 
 void Solver::multisolve(Cube cube) {
     solved = false;
-    int depth = maxDepth - 1;
 
     vector<thread> threads;
     for (int i = 0; i < 6; i++) {
         for (int n = 1; n <= 3; n++) {
-            threads.push_back(thread([this, cube, i, n, depth]() {
-                tryMove(cube, i, n, depth);
+            threads.push_back(thread([this, cube, i, n]() {
+                Cube newCube = cube;
+                newCube.move(i, n);
+
+                const bool completed = checkCompletion(newCube);
+
+                const bool result = checkDatabase(newCube);
+                if (result) solve(newCube, i);
                 }));
         }
     }
@@ -25,10 +31,10 @@ void Solver::multisolve(Cube cube) {
     }
 }
 
+bool Solver::solve(Cube cube, int lastMove) {
+    if (cube.g >= maxDepth) return false;
 
-bool Solver::solve(Cube cube, int depth, int lastMove) {
-    depth -= 1;
-    if (depth < 0) return false;
+    vector<Cube> cubes;
 
     for (int i = 0; i < 6; i++) {
         if (i == lastMove) continue;
@@ -37,42 +43,58 @@ bool Solver::solve(Cube cube, int depth, int lastMove) {
         if (i == 4 && lastMove == 2) continue;
 
         for (int n = 1; n <= 3; n++) {
-            const bool result = tryMove(cube, i, n, depth);
-            if (result) return true;
+            Cube newCube = cube;
+            newCube.move(i, n);
+
+            const bool completed = checkCompletion(newCube);
+            if (completed) return true;
+
+            const bool result = checkDatabase(newCube);
+
+            if (result) {
+                newCube.evaluate();
+                cubes.push_back(newCube);
+            }
         }
+    }
+
+    sort(cubes.begin(), cubes.end(), [](const Cube& a, const Cube& b) { return a.h < b.h; });
+
+    for (Cube cube : cubes) {
+        const bool result = solve(cube, cube.lastMove());
+        if (result) return true;
     }
 
     return false;
 }
 
+bool Solver::checkCompletion(Cube& cube) {
+    if (!cube.completion()) return false;
 
-bool Solver::tryMove(Cube cube, int i, int n, int depth) {
-    Cube newCube = cube;
-    newCube.move(i, n);
+    if (!solved) solved = true;
 
-    //Check if the cube is in the database
-    int result = patternDatabase.check(newCube);
+    if (logging) {
+        lock_guard<mutex> lock(printMutex);
+        cout << "Cube solved" << endl;
+        cout << "Solution: " << endl;
+        cube.printMoves();
+    }
+
+    return true;
+}
+
+bool Solver::checkDatabase(Cube& cube) {
+    int result = patternDatabase.check(cube);
     if (result != -1) {
         if (!solved) solved = true;
 
-        if (result < cube.distance) cube.distance = result;
-        else return false;
+        //if (result < cube.distance) cube.distance = result;
+        //else if (result > cube.distance) return false; //I don't know why it doesn't really work.
     }
     else if (solved) return false;
-    else if (patternDatabase.depthDB >= depth) return false;
+    else if (patternDatabase.depthDB >= maxDepth - cube.g) return false;
 
-    if (newCube.completion()) {
-        if (logging) {
-            lock_guard<mutex> lock(printMutex);
-            cout << "Cube solved" << endl;
-            cout << "Solution: " << endl;
-            newCube.printMoves();
-        }
-
-        return true;
-    }
-
-    return solve(newCube, depth, i);
+    return true;
 }
 
 void test(int depth, int runs) {
@@ -80,7 +102,7 @@ void test(int depth, int runs) {
     vector<Cube> cubes;
 
     cout << "Creating Cubes" << endl;
-    for (int i = 1; i <= runs; i++) {
+    for (int i = 0; i < runs; i++) {
         Cube cube = Cube();
         scramble(cube, depth, false);
         cubes.push_back(cube);
@@ -89,10 +111,10 @@ void test(int depth, int runs) {
     cout << "Starting..." << endl;
     auto start = chrono::system_clock::now();
 
-    for (int i = 1; i <= runs; i++) {
+    for (int i = 0; i < runs; i++) {
         solver.multisolve(cubes[i]);
 
-        cout << "Run " << i << " done" << endl;
+        cout << "Run " << i + 1 << " done" << endl;
     }
 
     auto end = chrono::system_clock::now();

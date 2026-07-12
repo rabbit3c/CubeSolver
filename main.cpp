@@ -26,6 +26,7 @@ int main() {
 
     //cout << endl;
 
+    //solver.solve(cube, depth, -1);
     solver.multisolve(cube);
     _exit(0);
 }

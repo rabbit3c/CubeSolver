@@ -9,11 +9,11 @@ class Solver {
 public:
     Solver(int maxDepth, bool logging = true);
 
-    bool solve(Cube cube, int depth, int lastMove);
+    bool solve(Cube cube, int lastMove);
     void multisolve(Cube cube);
 
 private:
-    PatternDatabase patternDatabase = PatternDatabase(7);
+    PatternDatabase patternDatabase = PatternDatabase(6);
 
     atomic<bool> solved{ false };
 
@@ -21,7 +21,8 @@ private:
     int maxDepth;
     bool logging;
 
-    bool tryMove(Cube cube, int i, int n, int depth);
+    bool checkCompletion(Cube& cube);
+    bool checkDatabase(Cube& cube);
 };
 
 void test(int depth, int runs);

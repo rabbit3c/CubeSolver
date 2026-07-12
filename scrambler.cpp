@@ -77,5 +77,6 @@ void scramble(Cube& cube, int numMoves, bool logging) {
     }
 
     cube.clearMoves();
+    cube.g = 0;
 }
 

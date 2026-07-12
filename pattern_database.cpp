@@ -55,9 +55,9 @@ void PatternDatabase::findChildren(Cube cube, int depth, int lastMove) {
 
     for (int i = 0; i < 6; i++) {
         if (i == lastMove) continue;
-        if (i == 1 && lastMove == 0) continue;
-        if (i == 5 && lastMove == 3) continue;
-        if (i == 4 && lastMove == 2) continue;
+        if (i == 0 && lastMove == 1) continue;
+        if (i == 3 && lastMove == 5) continue;
+        if (i == 2 && lastMove == 4) continue;
 
         for (int n = 1; n <= 3; n++) {
             Cube newCube = cube;

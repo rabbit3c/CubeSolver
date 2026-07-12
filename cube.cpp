@@ -24,6 +24,7 @@ void Cube::move(int face, int n) {
 
     addMove(face, n);
     distance++;
+    g++;
 }
 
 const array<int[4], 6> Cube::sides = { {
@@ -48,6 +49,11 @@ void Cube::addMove(int i, int n) {
     uint8_t move = i * 10 + n;
 
     moves.push_back(move);
+}
+
+int Cube::lastMove() {
+    if (moves.empty()) return -1;
+    return moves.back() / 10;
 }
 
 void Cube::print() {
@@ -87,12 +93,14 @@ bool Cube::completion() {
     return true;
 }
 
-float Cube::h() {
+float Cube::evaluate() {
     float d = 0;
     for (Side side : cube) {
         d += side.h();
     }
-    return pow(d / 10, 1.8);
+
+    h = pow(d / 10, 1.8);
+    return h;
 }
 
 array<uint32_t, 6> Cube::toKey() {
