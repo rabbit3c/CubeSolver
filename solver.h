@@ -13,12 +13,15 @@ public:
     void multisolve(Cube cube);
 
 private:
-    PatternDatabase patternDatabase = PatternDatabase(7);
+    PatternDatabase patternDatabase = PatternDatabase(6);
 
     atomic<bool> solved{ false };
 
     mutex printMutex;
     int maxDepth;
+    int margin = 2;
+    int maxStrikes = 2;
+
     bool logging;
 
     bool checkCompletion(Cube& cube);

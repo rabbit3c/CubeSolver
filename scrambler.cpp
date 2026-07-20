@@ -66,14 +66,15 @@ void scramble(Cube& cube, int numMoves, bool logging) {
         const int n = dist3(rng);
 
         cube.move(i, n);
-        //float h = cube.h();
-        //cout << "H: " << h << endl;
+        //cube.evaluate();
+        //cout << "H: " << cube.h << ", G: " << numMoves + 1 - cube.g << ", F: " << cube.h + numMoves + 1 - cube.g << endl;
     }
 
     if (logging) {
         cout << "Cube scrambled" << endl;
         cout << "Scramble: " << endl;
         cube.printMoves();
+        cout << endl;
     }
 
     cube.clearMoves();

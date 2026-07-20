@@ -13,6 +13,7 @@ public:
 
     float h = 1000;
     int g = 0;
+    int strikes = 0;
 
     Cube();
 

@@ -29,6 +29,21 @@ void Solver::multisolve(Cube cube) {
     for (auto& t : threads) {
         t.join();
     }
+
+    if (solved) return;
+
+    if (margin > 14) {
+        cout << "No Solution was found" << endl;
+        return;
+    }
+
+    if (logging) {
+        cout << "No Solution found with margin: " << margin << endl;
+        cout << "Trying with margin " << margin + 2 << endl << endl;
+    }
+
+    margin += 2;
+    multisolve(cube);
 }
 
 bool Solver::solve(Cube cube, int lastMove) {
@@ -50,11 +65,16 @@ bool Solver::solve(Cube cube, int lastMove) {
             if (completed) return true;
 
             const bool result = checkDatabase(newCube);
+            if (!result) continue;
 
-            if (result) {
-                newCube.evaluate();
-                cubes.push_back(newCube);
-            }
+            newCube.evaluate();
+
+            if (newCube.h + newCube.g > maxDepth + margin) newCube.strikes++;
+            else newCube.strikes = 0;
+
+            if (!solved & (newCube.strikes >= maxStrikes)) continue;
+
+            cubes.push_back(newCube);
         }
     }
 
