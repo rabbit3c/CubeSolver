@@ -14,7 +14,7 @@ int main() {
 
     SetConsoleOutputCP(CP_UTF8);
 
-    const int depth = 14;
+    const int depth = 12;
 
     //TODO: There is some bug. Try to figure out what is the problem. Probably incorrectly playing the moves I would imagine
 

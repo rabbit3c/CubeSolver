@@ -1,6 +1,4 @@
 #include <thread>
-#include <vector>
-#include <mutex>
 #include "cube.h"
 #include "solver.h"
 #include "scrambler.h"

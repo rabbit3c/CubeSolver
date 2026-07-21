@@ -71,7 +71,7 @@ private:
 
     static const int cornerTwist[4];
 
-    static const uint8_t maskSquare = 0b11111;
+    static const uint64_t maskSquare = 0b11111;
     static const uint8_t maskTwistCorner = 0b11000;
 
     void addMove(int c, int n);

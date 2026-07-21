@@ -1,9 +1,5 @@
 #include "cube.h"
-#include <array>
-#include <iostream>
 #include <cmath>
-
-using namespace std;
 
 Cube::Cube() {
     corners = solvedCorners;
@@ -11,8 +7,9 @@ Cube::Cube() {
 }
 
 void Cube::move(int face, int n) {
-    array<uint8_t, 4> c;
-    array<uint8_t, 4> e;
+    array<uint64_t, 4> c;
+    array<uint64_t, 4> e;
+
     for (int i = 0; i < 4; i++) {
         uint8_t corner = (corners >> cornersMoves[face][i] * 5) & maskSquare;
         uint8_t edge = (edges >> edgesMoves[face][i] * 5) & maskSquare;
@@ -40,12 +37,12 @@ void Cube::move(int face, int n) {
         int j = (i - n + 4) % 4;
 
         int shiftCorner = cornersMoves[face][i] * 5;
-        uint64_t maskCorner = static_cast<uint64_t>(maskSquare) << shiftCorner;
-        corners = (corners & ~maskCorner) | (static_cast<uint64_t>(c[j]) << shiftCorner);
+        uint64_t maskCorner = maskSquare << shiftCorner;
+        corners = (corners & ~maskCorner) | (c[j] << shiftCorner);
 
         int shiftEdge = edgesMoves[face][i] * 5;
-        uint64_t maskEdge = static_cast<uint64_t>(maskSquare) << shiftEdge;
-        edges = (edges & ~maskEdge) | (static_cast<uint64_t>(e[j]) << shiftEdge);
+        uint64_t maskEdge = maskSquare << shiftEdge;
+        edges = (edges & ~maskEdge) | (e[j] << shiftEdge);
     }
 
     addMove(face, n);

@@ -1,6 +1,4 @@
 #include <thread>
-#include <mutex>
-#include <iostream>
 #include <fstream>
 #include <filesystem>
 #include "pattern_database.h"
