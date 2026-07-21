@@ -9,6 +9,7 @@
 Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {}
 
 void Solver::multisolve(Cube cube) {
+    found = false;
     solved = false;
 
     vector<thread> threads;
@@ -31,6 +32,9 @@ void Solver::multisolve(Cube cube) {
     }
 
     if (solved) return;
+    if (found) {
+        cout << "Cube was found in the Database but not solved" << endl;
+    }
 
     if (margin > 14) {
         cout << "No Solution was found" << endl;
@@ -72,7 +76,7 @@ bool Solver::solve(Cube cube, int lastMove) {
             if (newCube.h + newCube.g > maxDepth + margin) newCube.strikes++;
             else newCube.strikes = 0;
 
-            if (!solved & (newCube.strikes >= maxStrikes)) continue;
+            if (!found & (newCube.strikes >= maxStrikes)) continue;
 
             cubes.push_back(newCube);
         }
@@ -91,6 +95,7 @@ bool Solver::solve(Cube cube, int lastMove) {
 bool Solver::checkCompletion(Cube& cube) {
     if (!cube.completion()) return false;
 
+    if (!found) found = true;
     if (!solved) solved = true;
 
     if (logging) {
@@ -106,12 +111,12 @@ bool Solver::checkCompletion(Cube& cube) {
 bool Solver::checkDatabase(Cube& cube) {
     int result = patternDatabase.check(cube);
     if (result != -1) {
-        if (!solved) solved = true;
+        if (!found) found = true;
 
         //if (result < cube.distance) cube.distance = result;
         //else if (result > cube.distance) return false; //I don't know why it doesn't really work.
     }
-    else if (solved) return false;
+    else if (found) return false;
     else if (patternDatabase.depthDB >= maxDepth - cube.g) return false;
 
     return true;

@@ -1,4 +1,5 @@
-#pragma 
+#pragma once
+
 #include <mutex>
 #include <vector>
 #include <atomic>
@@ -13,8 +14,9 @@ public:
     void multisolve(Cube cube);
 
 private:
-    PatternDatabase patternDatabase = PatternDatabase(6);
+    PatternDatabase patternDatabase = PatternDatabase(7);
 
+    atomic<bool> found{ false };
     atomic<bool> solved{ false };
 
     mutex printMutex;

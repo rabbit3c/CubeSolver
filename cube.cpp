@@ -1,25 +1,51 @@
 #include "cube.h"
 #include <array>
+#include <iostream>
 #include <cmath>
 
+using namespace std;
+
 Cube::Cube() {
-    for (int i = 0; i < cube.size(); i++) {
-        cube[i] = static_cast<color>(i);
-    }
+    corners = solvedCorners;
+    edges = solvedEdges;
 }
 
 void Cube::move(int face, int n) {
-    cube[face].rotate(n);
-
-    array<int, 4> lines;
+    array<uint8_t, 4> c;
+    array<uint8_t, 4> e;
     for (int i = 0; i < 4; i++) {
-        lines[i] = cube[sides[face][i]].getLine(nLines[face][i]);
+        uint8_t corner = (corners >> cornersMoves[face][i] * 5) & maskSquare;
+        uint8_t edge = (edges >> edgesMoves[face][i] * 5) & maskSquare;
+
+        if (face > 1 && n != 2) {
+            uint8_t twist = (corner >> 3) & 0b11;
+            corner &= ~maskTwistCorner;
+
+            twist += cornerTwist[i];
+            twist = twist % 3;
+
+            corner |= (twist << 3);
+        }
+
+        if ((face == 2 || face == 4) && n != 2) {
+            edge += 0b1 << 4;
+            edge &= maskSquare;
+        }
+
+        c[i] = corner;
+        e[i] = edge;
     }
 
     for (int i = 0; i < 4; i++) {
         int j = (i - n + 4) % 4;
 
-        cube[sides[face][i]].replaceLine(nLines[face][i], lines[j]);
+        int shiftCorner = cornersMoves[face][i] * 5;
+        uint64_t maskCorner = static_cast<uint64_t>(maskSquare) << shiftCorner;
+        corners = (corners & ~maskCorner) | (static_cast<uint64_t>(c[j]) << shiftCorner);
+
+        int shiftEdge = edgesMoves[face][i] * 5;
+        uint64_t maskEdge = static_cast<uint64_t>(maskSquare) << shiftEdge;
+        edges = (edges & ~maskEdge) | (static_cast<uint64_t>(e[j]) << shiftEdge);
     }
 
     addMove(face, n);
@@ -27,23 +53,26 @@ void Cube::move(int face, int n) {
     g++;
 }
 
-const array<int[4], 6> Cube::sides = { {
-    {2, 3, 4, 5},
-    {5, 4, 3, 2},
-    {0, 5, 1, 3},
-    {0, 2, 1, 4},
-    {5, 0, 3, 1},
-    {1, 2, 0, 4},
+//U, D, F, L, B, R
+const array<int[4], 6> Cube::cornersMoves = { {
+    {0, 1, 2, 3},
+    {7, 6, 5, 4},
+    {3, 2, 6, 7},
+    {0, 3, 7, 4},
+    {1, 0, 4, 5},
+    {2, 1, 5, 6},
 } };
 
-const array<int[4], 6> Cube::nLines = { {
-    {0, 0, 0, 0},
-    {2, 2, 2, 2},
-    {2, 3, 0, 1},
-    {3, 3, 3, 1},
-    {1, 0, 3, 2},
-    {1, 1, 1, 3},
+const array<int[4], 6> Cube::edgesMoves = { {
+    {0, 1, 2, 3},
+    {10, 9, 8, 11},
+    {2, 6, 10, 7},
+    {3, 7, 11, 4},
+    {0, 4, 8, 5},
+    {1, 5, 9, 6},
 } };
+
+const int Cube::cornerTwist[4] = { 1, 2, 1, 2 };
 
 void Cube::addMove(int i, int n) {
     uint8_t move = i * 10 + n;
@@ -59,9 +88,11 @@ int Cube::lastMove() {
 void Cube::print() {
     cout << "Cube: " << endl;
 
-    for (Side side : cube) {
+    //TODO: Add print Function
+
+    /*for (Side side : cube) {
         side.print();
-    }
+    }*/
 }
 
 void Cube::printMoves() {
@@ -86,36 +117,21 @@ void Cube::clearMoves() {
 }
 
 bool Cube::completion() {
-    for (Side side : cube) {
-        if (!side.completion()) return false;
-    }
-
-    return true;
+    return corners == solvedCorners && edges == solvedEdges;
 }
 
 float Cube::evaluate() {
     float d = 0;
-    for (Side side : cube) {
+    /*for (Side side : cube) {
         d += side.h();
-    }
+    }*/
+
+    //TODO: Add evaluation function
 
     h = pow(d / 10, 1.8);
     return h;
 }
 
-array<uint32_t, 6> Cube::toKey() {
-    array<uint32_t, 6> key;
-    for (int i = 0; i < 6; i++) {
-        key[i] = cube[i].ring;
-    }
-    return key;
-}
-
-size_t Cube::toHash() {
-    size_t seed = 0;
-
-    auto key = toKey();
-    for (uint32_t v : key)
-        seed ^= std::hash<uint32_t>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    return seed;
+CubeKey Cube::toKey() {
+    return CubeKey{ corners, edges };
 }

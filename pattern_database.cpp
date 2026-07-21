@@ -77,33 +77,37 @@ int PatternDatabase::getShard(const size_t& hash) {
 }
 
 bool PatternDatabase::addEntry(Cube cube) {
-    size_t hash = cube.toHash();
+    CubeKey key = cube.toKey();
+    size_t hash = CubeKeyHash{}(key);
     const int shard = getShard(hash);
 
     lock_guard<mutex> lock(shardMutexes[shard]);
 
-    if (!dbShards[shard].count(hash)) {
-        dbShards[shard][hash] = cube.distance;
+    auto it = dbShards[shard].find(key);
+
+    if (it == dbShards[shard].end()) {
+        dbShards[shard][key] = cube.distance;
         return false;
     }
 
     collisions++;
 
-    if (dbShards[shard][hash] <= cube.distance) return true;
+    if (it->second <= cube.distance) return true;
 
-    dbShards[shard][hash] = cube.distance;
+    it->second = cube.distance;
     return false;
 }
 
 int PatternDatabase::check(Cube& cube) {
-    size_t hash = cube.toHash();
+    CubeKey key = cube.toKey();
+    size_t hash = CubeKeyHash{}(key);
     const int shard = getShard(hash);
 
     auto& db = dbShards[shard];
 
-    if (!db.count(hash)) return -1;
+    if (!db.count(key)) return -1;
 
-    return db[hash];
+    return db[key];
 }
 
 int PatternDatabase::size() {
@@ -117,18 +121,6 @@ int PatternDatabase::size() {
     return totalSize;
 }
 
-void PatternDatabase::solve(Cube& cube, vector<uint8_t> moves) {
-    for (int j = moves.size() - 1; j >= 0; j--) {
-        uint8_t move = moves[j];
-        const int i = move / 10;
-        const int n = move % 10;
-        move = i * 10 + (4 - n);
-        cube.moves.push_back(move);
-    }
-
-    cube.cube = Cube().cube;
-}
-
 void PatternDatabase::save() {
     string path = "databases/database_d" + to_string(depthDB);
     filesystem::create_directories(path);
@@ -137,7 +129,7 @@ void PatternDatabase::save() {
         ofstream file(path + "/shard_" + to_string(i) + ".bin", ios::binary);
 
         for (auto& [key, distance] : dbShards[i]) {
-            file.write((char*)&key, sizeof(size_t));
+            file.write((char*)&key, sizeof(key));
             file.write((char*)&distance, sizeof(distance));
         }
 
@@ -154,11 +146,11 @@ bool PatternDatabase::load() {
         threads.push_back(thread([this, i, path]() {
             ifstream file(path + "/shard_" + to_string(i) + ".bin", ios::binary);
             while (file.peek() != EOF) {
-                size_t key;
-                file.read((char*)&key, sizeof(size_t));
+                CubeKey key;
+                if (!file.read((char*)&key, sizeof(key))) break;
 
                 uint8_t distance;
-                file.read((char*)&distance, sizeof(distance));
+                if (!file.read((char*)&distance, sizeof(distance))) break;
 
                 dbShards[i][key] = distance;
             }

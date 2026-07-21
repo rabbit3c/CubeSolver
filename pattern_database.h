@@ -1,4 +1,5 @@
 #pragma once
+
 #include <unordered_map>
 #include <mutex>
 #include <vector>
@@ -16,7 +17,7 @@ public:
 
 private:
     static const int numShards = 32;
-    unordered_map<size_t, uint8_t> dbShards[numShards];
+    unordered_map<CubeKey, uint8_t, CubeKeyHash> dbShards[numShards];
     mutex shardMutexes[numShards];
 
     int collisions = 0;
@@ -26,8 +27,6 @@ private:
     void multiFindChildren(Cube cube);
     void findChildren(Cube cube, int depth, int lastMove);
     bool addEntry(Cube cube);
-
-    void solve(Cube& cube, vector<uint8_t> moves);
 
     void save();
     bool load();

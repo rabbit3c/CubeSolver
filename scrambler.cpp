@@ -2,8 +2,6 @@
 #include <sstream>
 #include "cube.h"
 
-using namespace std;
-
 int parse(string move) {
     if (move.back() == '\'') return 3;
     if (move.back() == '2') return 2;

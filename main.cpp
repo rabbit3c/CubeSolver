@@ -6,7 +6,6 @@
 
 using namespace std;
 
-//TODO: Add maximum f value to IDA*. If no success, value increases.
 //TODO: Change cube representation from sides and colors to numbers. One uint64_t for the edges, one for the corners. Including permutations
 
 int main() {
@@ -15,12 +14,15 @@ int main() {
 
     SetConsoleOutputCP(CP_UTF8);
 
-    const int depth = 13;
+    const int depth = 14;
+
+    //TODO: There is some bug. Try to figure out what is the problem. Probably incorrectly playing the moves I would imagine
 
     Cube cube = Cube();
     Solver solver = Solver(depth);
 
     scramble(cube, depth);
+
     //cube.print();
     //float h = cube.h();
     //cout << "H: " << h << endl;
