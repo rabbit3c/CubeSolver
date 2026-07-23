@@ -23,6 +23,20 @@ struct CubeKeyHash {
     }
 };
 
+struct CornerKey {
+    uint64_t corners;
+    bool operator==(const CornerKey& other) const {
+        return corners == other.corners;
+    }
+};
+
+struct CornerKeyHash {
+    size_t operator()(const CornerKey& cornerKey) const {
+        size_t h = hash<uint64_t>{}(cornerKey.corners);
+        return h;
+    }
+};
+
 class Cube {
 public:
     //New representation of the cube
@@ -42,7 +56,7 @@ public:
 
     uint8_t distance = 0;
 
-    float h = 1000;
+    int h = 1000;
     int g = 0;
     int strikes = 0;
 
@@ -58,9 +72,8 @@ public:
 
     bool completion();
 
-    float evaluate();
-
     CubeKey toKey();
+    CornerKey toCornerKey();
 
 private:
     static const uint64_t solvedCorners = 247132686368;
@@ -72,7 +85,10 @@ private:
     static const int cornerTwist[4];
 
     static const uint64_t maskSquare = 0b11111;
-    static const uint8_t maskTwistCorner = 0b11000;
+    static const uint64_t maskEdge = 0b1111;
+    static const uint64_t maskCorner = 0b111;
+    static const uint64_t maskCornerTwist = 0b11;
+    static const uint64_t maskEdgeTwist = 0b1;
 
     void addMove(int c, int n);
 };

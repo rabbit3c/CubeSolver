@@ -1,6 +1,7 @@
 #include <random>
 #include <sstream>
 #include "cube.h"
+#include "corner_database.h"
 
 int parse(string move) {
     if (move.back() == '\'') return 3;
@@ -55,6 +56,9 @@ void scramble(Cube& cube, int numMoves, bool logging) {
     uniform_int_distribution<int> dist6(0, 5);
     uniform_int_distribution<int> dist3(1, 3);
 
+    //CornerDatabase cornerDatabase = CornerDatabase(20);
+    //cornerDatabase.init();
+
     int lastI;
     for (int _ = 0; _ < numMoves; _++) {
         int i = dist6(rng);
@@ -64,8 +68,8 @@ void scramble(Cube& cube, int numMoves, bool logging) {
         const int n = dist3(rng);
 
         cube.move(i, n);
-        //cube.evaluate();
-        //cout << "H: " << cube.h << ", G: " << numMoves + 1 - cube.g << ", F: " << cube.h + numMoves + 1 - cube.g << endl;
+        //cube.h = cornerDatabase.check(cube);
+        //cout << "H: " << cube.h << endl;
     }
 
     if (logging) {

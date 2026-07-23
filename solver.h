@@ -4,7 +4,8 @@
 #include <vector>
 #include <atomic>
 #include "cube.h"
-#include "pattern_database.h"
+#include "end_database.h"
+#include "corner_database.h"
 
 class Solver {
 public:
@@ -14,20 +15,21 @@ public:
     void multisolve(Cube cube);
 
 private:
-    PatternDatabase patternDatabase = PatternDatabase(6);
+    EndDatabase endDatabase = EndDatabase(7);
+    CornerDatabase cornerDatabase = CornerDatabase(20);
 
     atomic<bool> found{ false };
     atomic<bool> solved{ false };
 
     mutex printMutex;
     int maxDepth;
-    int margin = 2;
-    int maxStrikes = 2;
 
     bool logging;
 
     bool checkCompletion(Cube& cube);
     bool checkDatabase(Cube& cube);
+
+    void evaluate(Cube& cube);
 };
 
 void test(int depth, int runs);

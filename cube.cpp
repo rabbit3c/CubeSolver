@@ -1,5 +1,6 @@
 #include "cube.h"
 #include <cmath>
+#include "corner_database.h"
 
 Cube::Cube() {
     corners = solvedCorners;
@@ -15,8 +16,8 @@ void Cube::move(int face, int n) {
         uint8_t edge = (edges >> edgesMoves[face][i] * 5) & maskSquare;
 
         if (face > 1 && n != 2) {
-            uint8_t twist = (corner >> 3) & 0b11;
-            corner &= ~maskTwistCorner;
+            uint8_t twist = (corner >> 3) & maskCornerTwist;
+            corner &= maskCorner;
 
             twist += cornerTwist[i];
             twist = twist % 3;
@@ -25,7 +26,7 @@ void Cube::move(int face, int n) {
         }
 
         if ((face == 2 || face == 4) && n != 2) {
-            edge += 0b1 << 4;
+            edge += maskEdgeTwist << 4;
             edge &= maskSquare;
         }
 
@@ -84,12 +85,7 @@ int Cube::lastMove() {
 
 void Cube::print() {
     cout << "Cube: " << endl;
-
     //TODO: Add print Function
-
-    /*for (Side side : cube) {
-        side.print();
-    }*/
 }
 
 void Cube::printMoves() {
@@ -117,18 +113,10 @@ bool Cube::completion() {
     return corners == solvedCorners && edges == solvedEdges;
 }
 
-float Cube::evaluate() {
-    float d = 0;
-    /*for (Side side : cube) {
-        d += side.h();
-    }*/
-
-    //TODO: Add evaluation function
-
-    h = pow(d / 10, 1.8);
-    return h;
-}
-
 CubeKey Cube::toKey() {
     return CubeKey{ corners, edges };
+}
+
+CornerKey Cube::toCornerKey() {
+    return CornerKey{ corners };
 }

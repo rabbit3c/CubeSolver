@@ -14,7 +14,7 @@ int main() {
 
     SetConsoleOutputCP(CP_UTF8);
 
-    const int depth = 12;
+    const int depth = 15;
 
     //TODO: There is some bug. Try to figure out what is the problem. Probably incorrectly playing the moves I would imagine
 
@@ -25,7 +25,9 @@ int main() {
 
     //cube.print();
     //float h = cube.h();
-    //cout << "H: " << h << endl;
+    //cout << "Corners: " << cube.corners << endl;
+    //cout << "Edges: " << cube.edges << endl;
+    //cout << "H: " << cube.evaluate() << endl;
 
     //cout << endl;
 

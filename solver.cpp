@@ -4,7 +4,10 @@
 #include "scrambler.h"
 #include <algorithm>
 
-Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {}
+Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {
+    endDatabase.init();
+    cornerDatabase.init();
+}
 
 void Solver::multisolve(Cube cube) {
     found = false;
@@ -34,18 +37,8 @@ void Solver::multisolve(Cube cube) {
         cout << "Cube was found in the Database but not solved" << endl;
     }
 
-    if (margin > 14) {
-        cout << "No Solution was found" << endl;
-        return;
-    }
-
-    if (logging) {
-        cout << "No Solution found with margin: " << margin << endl;
-        cout << "Trying with margin " << margin + 2 << endl << endl;
-    }
-
-    margin += 2;
-    multisolve(cube);
+    cout << "No Solution was found" << endl;
+    return;
 }
 
 bool Solver::solve(Cube cube, int lastMove) {
@@ -69,12 +62,8 @@ bool Solver::solve(Cube cube, int lastMove) {
             const bool result = checkDatabase(newCube);
             if (!result) continue;
 
-            newCube.evaluate();
-
-            if (newCube.h + newCube.g > maxDepth + margin) newCube.strikes++;
-            else newCube.strikes = 0;
-
-            if (!found & (newCube.strikes >= maxStrikes)) continue;
+            evaluate(newCube);
+            if (!found & (newCube.h + newCube.g > maxDepth)) continue;
 
             cubes.push_back(newCube);
         }
@@ -107,7 +96,7 @@ bool Solver::checkCompletion(Cube& cube) {
 }
 
 bool Solver::checkDatabase(Cube& cube) {
-    int result = patternDatabase.check(cube);
+    int result = endDatabase.check(cube);
     if (result != -1) {
         if (!found) found = true;
 
@@ -115,9 +104,14 @@ bool Solver::checkDatabase(Cube& cube) {
         //else if (result > cube.distance) return false; //I don't know why it doesn't really work.
     }
     else if (found) return false;
-    else if (patternDatabase.depthDB >= maxDepth - cube.g) return false;
+    else if (endDatabase.depthDB >= maxDepth - cube.g) return false;
 
     return true;
+}
+
+void Solver::evaluate(Cube& cube) {
+    int h = cornerDatabase.check(cube);
+    cube.h = h;
 }
 
 void test(int depth, int runs) {
