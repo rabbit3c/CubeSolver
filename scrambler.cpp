@@ -2,6 +2,7 @@
 #include <sstream>
 #include "cube.h"
 #include "corner_database.h"
+#include "edge_database.h"
 
 int parse(string move) {
     if (move.back() == '\'') return 3;
@@ -58,6 +59,8 @@ void scramble(Cube& cube, int numMoves, bool logging) {
 
     //CornerDatabase cornerDatabase = CornerDatabase(20);
     //cornerDatabase.init();
+    //EdgeDatabase edgeDatabase = EdgeDatabase(20, 1);
+    //edgeDatabase.init();
 
     int lastI;
     for (int _ = 0; _ < numMoves; _++) {
@@ -69,6 +72,8 @@ void scramble(Cube& cube, int numMoves, bool logging) {
 
         cube.move(i, n);
         //cube.h = cornerDatabase.check(cube);
+        //cout << "H: " << cube.h << endl;
+        //cube.h = edgeDatabase.check(cube);
         //cout << "H: " << cube.h << endl;
     }
 

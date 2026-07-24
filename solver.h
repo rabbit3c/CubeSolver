@@ -6,6 +6,7 @@
 #include "cube.h"
 #include "end_database.h"
 #include "corner_database.h"
+#include "edge_database.h"
 
 class Solver {
 public:
@@ -17,6 +18,8 @@ public:
 private:
     EndDatabase endDatabase = EndDatabase(7);
     CornerDatabase cornerDatabase = CornerDatabase(20);
+    EdgeDatabase edgeDatabase0 = EdgeDatabase(20, 0);
+    EdgeDatabase edgeDatabase1 = EdgeDatabase(20, 1);
 
     atomic<bool> found{ false };
     atomic<bool> solved{ false };

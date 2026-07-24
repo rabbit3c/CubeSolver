@@ -2,7 +2,7 @@
 
 #include "database.h"
 
-class EndDatabase : public Database<CubeKey, CubeKeyHash> {
+class EndDatabase : public Database<CubeKey, CubeKeyHash, size_t> {
 public:
     EndDatabase(int depth) : Database(depth) {
         name = "End";

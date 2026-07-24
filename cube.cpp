@@ -120,3 +120,18 @@ CubeKey Cube::toKey() {
 CornerKey Cube::toCornerKey() {
     return CornerKey{ corners };
 }
+
+EdgeKey Cube::toEdgeKey(int n) {
+    uint64_t e = edges;
+    n *= 6;
+
+    for (int i = 0; i < 12; i++) {
+        uint8_t edge = (e >> (i * 5)) & maskEdge;
+
+        if (edge >= n && edge < n + 6) continue;
+
+        e &= ~(maskSquare << (i * 5));
+    }
+
+    return EdgeKey{ e };
+}

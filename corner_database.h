@@ -2,7 +2,7 @@
 
 #include "database.h"
 
-class CornerDatabase : public Database<CornerKey, CornerKeyHash> {
+class CornerDatabase : public Database<CornerKey, CornerKeyHash, size_t> {
 public:
     CornerDatabase(int depth) : Database(depth) {
         name = "Corner";

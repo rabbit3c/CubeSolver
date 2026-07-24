@@ -5,6 +5,8 @@
 #include <algorithm>
 
 Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {
+    edgeDatabase0.init();
+    edgeDatabase1.init();
     endDatabase.init();
     cornerDatabase.init();
 }
@@ -65,6 +67,8 @@ bool Solver::solve(Cube cube, int lastMove) {
             evaluate(newCube);
             if (!found & (newCube.h + newCube.g > maxDepth)) continue;
 
+            //TODO simplify multiple Lookup of End Database;
+
             cubes.push_back(newCube);
         }
     }
@@ -110,8 +114,11 @@ bool Solver::checkDatabase(Cube& cube) {
 }
 
 void Solver::evaluate(Cube& cube) {
-    int h = cornerDatabase.check(cube);
-    cube.h = h;
+    int cornerH = cornerDatabase.check(cube);
+    int edge0H = edgeDatabase0.check(cube);
+    int edge1H = edgeDatabase1.check(cube);
+
+    cube.h = max(max(edge0H, edge1H), cornerH);
 }
 
 void test(int depth, int runs) {

@@ -7,7 +7,7 @@
 #include <filesystem>
 #include "cube.h"
 
-template <typename KeyType, typename HashType>
+template <typename KeyType, typename Hash, typename HashType>
 class Database {
 public:
     int depthDB;
@@ -38,7 +38,7 @@ public:
 
     virtual int check(Cube& cube) {
         KeyType key = getKey(cube);
-        size_t hash = HashType{}(key);
+        HashType hash = Hash{}(key);
         const int shard = getShard(hash);
 
         auto& db = dbShards[shard];
@@ -50,13 +50,13 @@ public:
 
 protected:
     static const int numShards = 32;
-    unordered_map<KeyType, uint8_t, HashType> dbShards[numShards];
+    unordered_map<KeyType, uint8_t, Hash> dbShards[numShards];
     mutex shardMutexes[numShards];
 
     int collisions = 0;
     string name;
 
-    int getShard(const size_t& hash) {
+    int getShard(const HashType& hash) {
         return hash % numShards;
     };
 
@@ -104,7 +104,7 @@ protected:
 
     virtual bool addEntry(Cube cube) {
         KeyType key = getKey(cube);
-        size_t hash = HashType{}(key);
+        HashType hash = Hash{}(key);
         const int shard = getShard(hash);
 
         lock_guard<mutex> lock(shardMutexes[shard]);
