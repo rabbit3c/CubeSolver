@@ -42,11 +42,6 @@ int main() {
     scramble(cube, depth);
 
     //cube.print();
-    //float h = cube.h();
-    //cout << "Corners: " << cube.corners << endl;
-    //cout << "Edges: " << cube.edges << endl;
-    //cout << "H: " << cube.evaluate() << endl;
-
     //cout << endl;
 
     solver.multisolve(cube);
@@ -67,4 +62,6 @@ int main() {
 //      Change to float and add numbers after the coma based on other heuristics. Don't fuck up the pruning V
 
 //TODO: Store only the distance at the the correct place (corresponding to the key) instead of storing key and distance;
+
+//TODO: Add nodes per seconds and nodes explored metric
 

@@ -4,7 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <iostream>
-#include "database_keys.h"
+#include "databases/database_keys.h"
 
 using namespace std;
 
@@ -15,7 +15,7 @@ public:
     //Numeration starts with the top left corner from the white side in clockwise (U direction). The corners on the yellow side are numerated parallel to the top corners
     //0w1 xxx 4y5
     //www xxx yyy
-    //2w3 xxx 6y7
+    //3w2 xxx 7y6
 
     uint64_t edges; //4bits for the edge (0 - 11) followed by 1 bit for the orientation (0 - 1) -> 5 bits per edge -> 60 total
     //Numeration starts with the top edge from the wide side in clockwise (U direction). the other edges are numerated parallel to the top edges.
@@ -28,7 +28,6 @@ public:
     int h;
     int hAverage;
     int g = 0;
-    int strikes = 0;
 
     Cube();
 
@@ -60,6 +59,9 @@ private:
     static const uint64_t maskCorner = 0b111;
     static const uint64_t maskCornerTwist = 0b11;
     static const uint64_t maskEdgeTwist = 0b1;
+
+    uint8_t getCorner(int i);
+    uint8_t getEdge(int i);
 
     void addMove(int c, int n);
 };

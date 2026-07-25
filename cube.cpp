@@ -1,6 +1,5 @@
 #include "cube.h"
 #include <cmath>
-#include "corner_database.h"
 
 Cube::Cube() {
     corners = solvedCorners;
@@ -12,8 +11,8 @@ void Cube::move(int face, int n) {
     array<uint64_t, 4> e;
 
     for (int i = 0; i < 4; i++) {
-        uint8_t corner = (corners >> cornersMoves[face][i] * 5) & maskSquare;
-        uint8_t edge = (edges >> edgesMoves[face][i] * 5) & maskSquare;
+        uint8_t corner = getCorner(cornersMoves[face][i]);
+        uint8_t edge = getEdge(edgesMoves[face][i]);
 
         if (face > 1 && n != 2) {
             uint8_t twist = (corner >> 3) & maskCornerTwist;
@@ -71,6 +70,14 @@ const array<int[4], 6> Cube::edgesMoves = { {
 
 const int Cube::cornerTwist[4] = { 1, 2, 1, 2 };
 
+uint8_t Cube::getCorner(int i) {
+    return (corners >> i * 5) & maskSquare;
+}
+
+uint8_t Cube::getEdge(int i) {
+    return (edges >> i * 5) & maskSquare;
+}
+
 void Cube::addMove(int i, int n) {
     uint8_t move = i * 10 + n;
 
@@ -125,7 +132,7 @@ EdgeKey Cube::toEdgeKey(int n) {
     n *= 6;
 
     for (int i = 0; i < 12; i++) {
-        uint8_t edge = (e >> (i * 5)) & maskEdge;
+        uint8_t edge = getEdge(i);
 
         if (edge >= n && edge < n + 6) continue;
 

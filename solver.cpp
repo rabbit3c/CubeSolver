@@ -3,6 +3,7 @@
 #include "solver.h"
 #include "scrambler.h"
 #include <algorithm>
+#include <numeric>
 
 Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {
     edgeDatabase0.init();
@@ -12,8 +13,11 @@ Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging
 }
 
 void Solver::multisolve(Cube cube) {
+    auto start = chrono::system_clock::now();
+
     found = false;
     solved = false;
+    nodes = 0;
 
     vector<thread> threads;
     for (int i = 0; i < 6; i++) {
@@ -22,10 +26,11 @@ void Solver::multisolve(Cube cube) {
                 Cube newCube = cube;
                 newCube.move(i, n);
 
-                const bool completed = checkCompletion(newCube);
+                checkCompletion(newCube);
 
-                const bool result = checkDatabase(newCube);
-                if (result) solve(newCube, i);
+                int nodesThread = 1;
+                solve(newCube, i, nodesThread);
+                nodes += nodesThread;
                 }));
         }
     }
@@ -34,7 +39,15 @@ void Solver::multisolve(Cube cube) {
         t.join();
     }
 
-    if (solved) return;
+    auto end = chrono::system_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+
+    if (solved) {
+        cout << endl << "Amount of explored nodes: " << nodes << endl;
+        cout << "Nodes per second: " << nodes / duration.count() * 1000 << "/s" << endl;
+        return;
+    }
+
     if (found) {
         cout << "Cube was found in the Database but not solved" << endl;
     }
@@ -53,8 +66,9 @@ void Solver::multisolve(Cube cube) {
     multisolve(cube);
 }
 
-bool Solver::solve(Cube cube, int lastMove) {
+bool Solver::solve(Cube cube, int lastMove, int& nodesThread) {
     if (cube.g >= depth) return false;
+    nodesThread++;
 
     vector<Cube> cubes;
 
@@ -71,13 +85,8 @@ bool Solver::solve(Cube cube, int lastMove) {
             const bool completed = checkCompletion(newCube);
             if (completed) return true;
 
-            const bool result = checkDatabase(newCube);
+            const bool result = evaluate(newCube);
             if (!result) continue;
-
-            evaluate(newCube);
-            if (!found & (newCube.h + newCube.g > depth)) continue;
-
-            //TODO simplify multiple Lookup of End Database;
 
             cubes.push_back(newCube);
         }
@@ -89,7 +98,7 @@ bool Solver::solve(Cube cube, int lastMove) {
         });
 
     for (Cube cube : cubes) {
-        const bool result = solve(cube, cube.lastMove());
+        const bool result = solve(cube, cube.lastMove(), nodesThread);
         if (result) return true;
     }
 
@@ -104,7 +113,7 @@ bool Solver::checkCompletion(Cube& cube) {
 
     if (logging) {
         lock_guard<mutex> lock(printMutex);
-        cout << "Cube solved" << endl;
+        cout << "Cube solved" << endl << endl;
         cout << "Solution: " << endl;
         cube.printMoves();
     }
@@ -112,27 +121,28 @@ bool Solver::checkCompletion(Cube& cube) {
     return true;
 }
 
-bool Solver::checkDatabase(Cube& cube) {
-    int result = endDatabase.check(cube);
-    if (result != -1) {
+bool Solver::evaluate(Cube& cube) {
+    int endH = endDatabase.check(cube);
+
+    if (endH != -1) {
         if (!found) found = true;
 
-        //if (result < cube.distance) cube.distance = result;
-        //else if (result > cube.distance) return false; //I don't know why it doesn't really work.
+        cube.h = endH;
+        return true;
     }
     else if (found) return false;
     else if (endDatabase.depthDB >= depth - cube.g) return false;
 
+    auto arrayH = getArrayH(cube);
+    cube.h = *max_element(arrayH.begin(), arrayH.end());
+    cube.hAverage = accumulate(arrayH.begin(), arrayH.end(), 0);
+
+    if (!found & (cube.h + cube.g > depth)) return false;
     return true;
 }
 
-void Solver::evaluate(Cube& cube) {
-    int cornerH = cornerDatabase.check(cube);
-    int edge0H = edgeDatabase0.check(cube);
-    int edge1H = edgeDatabase1.check(cube);
-
-    cube.h = max({ edge0H, edge1H, cornerH });
-    cube.hAverage = (cornerH + edge0H + edge1H) / 3;
+array<int, 3> Solver::getArrayH(Cube& cube) {
+    return { cornerDatabase.check(cube), edgeDatabase0.check(cube), edgeDatabase1.check(cube) };
 }
 
 void test(int depth, int runs) {

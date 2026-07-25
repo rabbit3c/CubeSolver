@@ -5,7 +5,7 @@
 #include <thread>
 #include <fstream>
 #include <filesystem>
-#include "cube.h"
+#include "../cube.h"
 
 template <typename KeyType, typename Hash, typename HashType>
 class Database {
