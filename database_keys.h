@@ -5,6 +5,15 @@
 
 using namespace std;
 
+inline size_t splitMixHash(uint64_t x) {
+    x ^= x >> 30;
+    x *= 0xbf58476d1ce4e5b9ULL;
+    x ^= x >> 27;
+    x *= 0x94d049bb133111ebULL;
+    x ^= x >> 31;
+    return static_cast<size_t>(x);
+}
+
 struct CubeKey {
     uint64_t corners;
     uint64_t edges;
@@ -44,7 +53,7 @@ struct EdgeKey {
 
 struct EdgeKeyHash {
     size_t operator()(const EdgeKey& edgeKey) const {
-        size_t h = hash<uint64_t>{}(edgeKey.edges);
+        size_t h = splitMixHash(edgeKey.edges);
         return h;
     }
 };

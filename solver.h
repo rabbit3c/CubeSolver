@@ -12,6 +12,8 @@ class Solver {
 public:
     Solver(int maxDepth, bool logging = true);
 
+    int depth = 12;
+
     bool solve(Cube cube, int lastMove);
     void multisolve(Cube cube);
 

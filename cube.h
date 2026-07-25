@@ -25,9 +25,7 @@ public:
 
     vector<uint8_t> moves;
 
-    uint8_t distance = 0;
-
-    int h = 1000;
+    int h;
     int g = 0;
     int strikes = 0;
 

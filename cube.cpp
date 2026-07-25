@@ -47,7 +47,6 @@ void Cube::move(int face, int n) {
     }
 
     addMove(face, n);
-    distance++;
     g++;
 }
 

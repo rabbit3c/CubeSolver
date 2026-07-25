@@ -112,15 +112,15 @@ protected:
         auto it = dbShards[shard].find(key);
 
         if (it == dbShards[shard].end()) {
-            dbShards[shard][key] = cube.distance;
+            dbShards[shard][key] = static_cast<uint8_t>(cube.g);
             return false;
         }
 
         collisions++;
 
-        if (it->second <= cube.distance) return true;
+        if (it->second <= cube.g) return true;
 
-        it->second = cube.distance;
+        it->second = static_cast<uint8_t>(cube.g);
         return false;
     }
 

@@ -39,12 +39,22 @@ void Solver::multisolve(Cube cube) {
         cout << "Cube was found in the Database but not solved" << endl;
     }
 
-    cout << "No Solution was found" << endl;
-    return;
+    if (depth >= maxDepth) {
+        cout << "No Solution was found" << endl;
+        return;
+    }
+
+    if (logging) {
+        cout << "No solution found at depth " << depth << endl;
+        cout << "Trying with depth " << depth + 1 << endl << endl;
+    }
+
+    depth++;
+    multisolve(cube);
 }
 
 bool Solver::solve(Cube cube, int lastMove) {
-    if (cube.g >= maxDepth) return false;
+    if (cube.g >= depth) return false;
 
     vector<Cube> cubes;
 
@@ -65,7 +75,7 @@ bool Solver::solve(Cube cube, int lastMove) {
             if (!result) continue;
 
             evaluate(newCube);
-            if (!found & (newCube.h + newCube.g > maxDepth)) continue;
+            if (!found & (newCube.h + newCube.g > depth)) continue;
 
             //TODO simplify multiple Lookup of End Database;
 
@@ -108,7 +118,7 @@ bool Solver::checkDatabase(Cube& cube) {
         //else if (result > cube.distance) return false; //I don't know why it doesn't really work.
     }
     else if (found) return false;
-    else if (endDatabase.depthDB >= maxDepth - cube.g) return false;
+    else if (endDatabase.depthDB >= depth - cube.g) return false;
 
     return true;
 }
@@ -122,7 +132,7 @@ void Solver::evaluate(Cube& cube) {
 }
 
 void test(int depth, int runs) {
-    Solver solver = Solver(depth, false);
+    Solver solver = Solver(depth, true);
     vector<Cube> cubes;
 
     cout << "Creating Cubes" << endl;
@@ -136,6 +146,7 @@ void test(int depth, int runs) {
     auto start = chrono::system_clock::now();
 
     for (int i = 0; i < runs; i++) {
+        solver.depth = 12;
         solver.multisolve(cubes[i]);
 
         cout << "Run " << i + 1 << " done" << endl;
