@@ -64,7 +64,7 @@ int main() {
 //TODO: Use fucking Symmetry
 
 //TODO: Improve heuristic function.
-//      Change to float and add numbers after the coma based on other heuristics. Don't fuck up the pruning
+//      Change to float and add numbers after the coma based on other heuristics. Don't fuck up the pruning V
 
 //TODO: Store only the distance at the the correct place (corresponding to the key) instead of storing key and distance;
 

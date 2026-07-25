@@ -83,7 +83,10 @@ bool Solver::solve(Cube cube, int lastMove) {
         }
     }
 
-    sort(cubes.begin(), cubes.end(), [](const Cube& a, const Cube& b) { return a.h < b.h; });
+    sort(cubes.begin(), cubes.end(), [](const Cube& a, const Cube& b) {
+        if (a.h != b.h) return a.h < b.h;
+        else return a.hAverage < b.hAverage;
+        });
 
     for (Cube cube : cubes) {
         const bool result = solve(cube, cube.lastMove());
@@ -128,7 +131,8 @@ void Solver::evaluate(Cube& cube) {
     int edge0H = edgeDatabase0.check(cube);
     int edge1H = edgeDatabase1.check(cube);
 
-    cube.h = max(max(edge0H, edge1H), cornerH);
+    cube.h = max({ edge0H, edge1H, cornerH });
+    cube.hAverage = (cornerH + edge0H + edge1H) / 3;
 }
 
 void test(int depth, int runs) {

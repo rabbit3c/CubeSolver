@@ -26,6 +26,7 @@ public:
     vector<uint8_t> moves;
 
     int h;
+    int hAverage;
     int g = 0;
     int strikes = 0;
 
