@@ -12,10 +12,10 @@ class Cube {
 public:
     //New representation of the cube
     uint64_t corners; //3bits for the corner (0 - 7) followed by 2 bits for the 3 orientations (0 - 2) -> 5 bits per corner -> 40 total
-    //Numeration starts with the top left corner from the white side in clockwise (U direction). The corners on the yellow side are numerated parallel to the top corners
+    //Bit 0: L 0, R 0, Bit 1: B 0, F 1, Bit 2: U 0, D 1
     //0w1 xxx 4y5
     //www xxx yyy
-    //3w2 xxx 7y6
+    //2w3 xxx 6y7
 
     uint64_t edges; //4bits for the edge (0 - 11) followed by 1 bit for the orientation (0 - 1) -> 5 bits per edge -> 60 total
     //Numeration starts with the top edge from the wide side in clockwise (U direction). the other edges are numerated parallel to the top edges.
@@ -45,6 +45,8 @@ public:
     CornerKey toCornerKey();
     EdgeKey toEdgeKey(int i);
 
+    uint8_t getCorner(int i);
+
 private:
     static const uint64_t solvedCorners = 247132686368;
     static const uint64_t solvedEdges = 407901468851537952;
@@ -60,7 +62,6 @@ private:
     static const uint64_t maskCornerTwist = 0b11;
     static const uint64_t maskEdgeTwist = 0b1;
 
-    uint8_t getCorner(int i);
     uint8_t getEdge(int i);
 
     void addMove(int c, int n);

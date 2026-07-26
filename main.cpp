@@ -3,10 +3,12 @@
 #include "cube.h"
 #include "scrambler.h"
 #include "solver.h"
+#include "symmetry.h"
 
 using namespace std;
 
 void generateDatabases() {
+    Symmetry::generateCornerSymmetries();
     {
         auto endDatabase = EndDatabase(7);
         endDatabase.init();
@@ -25,14 +27,29 @@ void generateDatabases() {
     }
 }
 
+void testSymmetry() {
+    Symmetry::generateCornerSymmetries();
+
+    for (int i = 0; i < 8; i++) {
+        Cube cube = Cube();
+        cube.move(2 + (i % 4), 1);
+        cube.move(i / 4, 1);
+
+        cout << cube.corners << endl;
+        auto corners = Symmetry::standardizeCorners(cube.corners);
+        cout << corners << endl;
+    }
+}
+
 int main() {
     //test(15, 5);
-    //return 0;
-
     //generateDatabases();
+    //testSymmetry();
     //return 0;
 
     SetConsoleOutputCP(CP_UTF8);
+
+    Symmetry::generateCornerSymmetries();
 
     const int depth = 15;
 
@@ -48,20 +65,13 @@ int main() {
     _exit(0);
 }
 
+//IDEAS
 
-//TODO: Start with low depth and increase it gradually until finding a solution V
-
-//TODO: Optimize Database Generation
-//      Improve spreading on different shards, by improving hashing function V
-//      Use Symmetry
-//      Reduce Max Depth V
-
-//TODO: Use fucking Symmetry
-
-//TODO: Improve heuristic function.
-//      Change to float and add numbers after the coma based on other heuristics. Don't fuck up the pruning V
-
-//TODO: Store only the distance at the the correct place (corresponding to the key) instead of storing key and distance;
-
-//TODO: Add nodes per seconds and nodes explored metric
+// - Use Symmetry to have only one EdgeDatabase instead of two
+// - Use Symmetry to reduce the size of the Databases (at least by factor 24, maybe 48)
+// - Increase Size of End Database thanks to size reduction due to symmetry
+// - Store Corner and Edge Databases as array instead of unordered map. Use the key as indices by transforming it into factorial
+// - Increase Size of Edge Database (amount of Edges tracked) thanks to savings due to symmetry and array storage, 8 Edges should be possible
+// - Add more Types of Databases in the hope of improving heuristics.
+// - Improve Node Generation Speed (don't know exactly how. Smart maths or something)
 

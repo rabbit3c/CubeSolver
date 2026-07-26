@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "symmetry.h"
 #include <cmath>
 
 Cube::Cube() {
@@ -51,12 +52,12 @@ void Cube::move(int face, int n) {
 
 //U, D, F, L, B, R
 const array<int[4], 6> Cube::cornersMoves = { {
-    {0, 1, 2, 3},
-    {7, 6, 5, 4},
-    {3, 2, 6, 7},
-    {0, 3, 7, 4},
+    {0, 1, 3, 2},
+    {6, 7, 5, 4},
+    {2, 3, 7, 6},
+    {0, 2, 6, 4},
     {1, 0, 4, 5},
-    {2, 1, 5, 6},
+    {3, 1, 5, 7},
 } };
 
 const array<int[4], 6> Cube::edgesMoves = { {
@@ -124,7 +125,8 @@ CubeKey Cube::toKey() {
 }
 
 CornerKey Cube::toCornerKey() {
-    return CornerKey{ corners };
+    uint64_t standardized = Symmetry::standardizeCorners(corners);
+    return CornerKey{ standardized };
 }
 
 EdgeKey Cube::toEdgeKey(int n) {
