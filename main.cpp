@@ -8,9 +8,9 @@
 using namespace std;
 
 void generateDatabases() {
-    Symmetry::generateCornerSymmetries();
+    Symmetry::generate();
     {
-        auto endDatabase = EndDatabase(7);
+        auto endDatabase = EndDatabase(8);
         endDatabase.init();
     }
     {
@@ -18,26 +18,32 @@ void generateDatabases() {
         cornerDatabase.init();
     }
     {
-        auto edgeDatabase0 = EdgeDatabase(12, 0);
-        edgeDatabase0.init();
+        auto edgeDatabase = EdgeDatabase(12, 0);
+        edgeDatabase.init();
     }
     {
-        auto edgeDatabase1 = EdgeDatabase(12, 1);
-        edgeDatabase1.init();
+        auto edgeDatabase = EdgeDatabase(12, 1);
+        edgeDatabase.init();
     }
 }
 
 void testSymmetry() {
-    Symmetry::generateCornerSymmetries();
+    Symmetry::generate();
 
     for (int i = 0; i < 8; i++) {
         Cube cube = Cube();
         cube.move(2 + (i % 4), 1);
         cube.move(i / 4, 1);
 
-        cout << cube.corners << endl;
+        cout << "Move " << i + 1 << ": " << endl;
+
+        cout << cube.corners << " -> ";
         auto corners = Symmetry::standardizeCorners(cube.corners);
         cout << corners << endl;
+
+        cout << cube.edges << " -> ";
+        auto edges = Symmetry::standardizeEdges(cube.edges);
+        cout << edges << endl << endl;
     }
 }
 
@@ -49,9 +55,9 @@ int main() {
 
     SetConsoleOutputCP(CP_UTF8);
 
-    Symmetry::generateCornerSymmetries();
+    Symmetry::generate();
 
-    const int depth = 15;
+    const int depth = 16;
 
     Cube cube = Cube();
     Solver solver = Solver(depth);
@@ -72,6 +78,6 @@ int main() {
 // - Increase Size of End Database thanks to size reduction due to symmetry
 // - Store Corner and Edge Databases as array instead of unordered map. Use the key as indices by transforming it into factorial
 // - Increase Size of Edge Database (amount of Edges tracked) thanks to savings due to symmetry and array storage, 8 Edges should be possible
-// - Add more Types of Databases in the hope of improving heuristics.
+// - Add more Types of Databases in the hope of improving heuristics. Full Edge Database for some moves? Permutation only database. Corner and Edge Combination database.
 // - Improve Node Generation Speed (don't know exactly how. Smart maths or something)
 

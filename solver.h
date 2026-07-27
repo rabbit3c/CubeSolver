@@ -18,10 +18,10 @@ public:
     void multisolve(Cube cube);
 
 private:
-    EndDatabase endDatabase = EndDatabase(7);
-    CornerDatabase cornerDatabase = CornerDatabase(20);
-    EdgeDatabase edgeDatabase0 = EdgeDatabase(20, 0);
-    EdgeDatabase edgeDatabase1 = EdgeDatabase(20, 1);
+    EndDatabase endDatabase = EndDatabase(8);
+    CornerDatabase cornerDatabase = CornerDatabase(12);
+    EdgeDatabase edgeDatabaseA = EdgeDatabase(12, 0);
+    EdgeDatabase edgeDatabaseB = EdgeDatabase(12, 1);
 
     atomic<bool> found{ false };
     atomic<bool> solved{ false };

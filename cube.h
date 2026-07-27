@@ -43,7 +43,7 @@ public:
 
     CubeKey toKey();
     CornerKey toCornerKey();
-    EdgeKey toEdgeKey(int i);
+    EdgeKey toEdgeKey(int n);
 
     uint8_t getCorner(int i);
 

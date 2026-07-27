@@ -2,6 +2,8 @@
 #include <sstream>
 #include "cube.h"
 //#include "databases/corner_database.h"
+//#include "databases/edge_database.h"
+//#include "databases/end_database.h"
 
 int parse(string move) {
     if (move.back() == '\'') return 3;
@@ -58,6 +60,12 @@ void scramble(Cube& cube, int numMoves, bool logging) {
 
     //auto cornerDatabase = CornerDatabase(12);
     //cornerDatabase.init();
+    //auto edgeDatabaseA = EdgeDatabase(12, 0);
+    //edgeDatabaseA.init();
+    //auto edgeDatabaseB = EdgeDatabase(12, 1);
+    //edgeDatabaseB.init();
+    //auto endDatabase = EndDatabase(8);
+    //endDatabase.init();
 
     int lastI;
     for (int _ = 0; _ < numMoves; _++) {
@@ -69,6 +77,9 @@ void scramble(Cube& cube, int numMoves, bool logging) {
 
         cube.move(i, n);
         //cout << cornerDatabase.check(cube) << endl;
+        //cout << edgeDatabaseA.check(cube) << endl;
+        //cout << edgeDatabaseB.check(cube) << endl;
+        //cout << endDatabase.check(cube) << endl;
     }
 
     if (logging) {
