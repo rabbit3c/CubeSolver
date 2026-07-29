@@ -95,7 +95,9 @@ bool Database<KeyType, Hash, HashType>::addEntry(Cube cube) {
 
     collisions++;
 
-    if (it->second <= cube.g) return true;
+    if (it->second < cube.g) return true;
+    if (it->second == cube.g && cube.g > 7) return true;
+    if (it->second == cube.g) return false;
 
     it->second = static_cast<uint8_t>(cube.g);
     return false;

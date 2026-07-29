@@ -129,15 +129,21 @@ CornerKey Cube::toCornerKey() {
 }
 
 EdgeKey Cube::toEdgeKey(int n) {
-    uint64_t standardized = Symmetry::standardizeEdges(edges);;
-    n *= 6;
+    int a = n == 0 ? 0 : 5;
+    int b = n == 0 ? 7 : 12;
+    uint64_t standardized = UINT64_MAX;
 
-    for (int i = 0; i < 12; i++) {
-        uint8_t edge = (standardized >> i * 5) & 0b01111;
+    for (int i = 0; i < Symmetry::edgeSymmetries.size(); i++) {
+        uint64_t transformed = Symmetry::applyEdgeSymmetry(edges, i);
 
-        if (edge >= n && edge < n + 6) continue;
+        for (int slot = 0; slot < 12; slot++) {
+            uint8_t edgeID = (transformed >> slot * 5) & 0b01111;
 
-        standardized &= ~(maskSquare << (i * 5));
+            if (edgeID >= a && edgeID < b) continue;
+            transformed |= (maskSquare << (slot * 5));
+        }
+
+        if (transformed < standardized) standardized = transformed;
     }
 
     return EdgeKey{ standardized };
