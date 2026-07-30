@@ -44,12 +44,12 @@ void testSymmetry() {
 
             cout << "Move " << n << ": " << endl;
 
-            cout << cube.corners << " -> ";
             auto corners = Symmetry::standardizeCorners(cube.corners);
+            cout << cube.corners << " -> ";
             cout << corners << endl;
 
-            cout << cube.edges << " -> ";
             auto edges = Symmetry::standardizeEdges(cube.edges);
+            cout << cube.edges << " -> ";
             cout << edges << endl << endl;
         }
     }
@@ -84,10 +84,10 @@ void testDatabases() {
 
 int main() {
     //test(15, 5);
-    //generateDatabases();
+    generateDatabases();
     //testSymmetry();
     //testDatabases();
-    //return 0;
+    return 0;
 
     SetConsoleOutputCP(CP_UTF8);
 
@@ -107,12 +107,11 @@ int main() {
 
 //IDEAS
 
-// - Use Symmetry to have only one EdgeDatabase instead of two
-// - Use Symmetry to reduce the size of the Databases (at least by factor 24, maybe 48)
-// - Increase Size of End Database thanks to size reduction due to symmetry
-// - Store Corner and Edge Databases as array instead of unordered map. Use the key as indices by transforming it into factorial
+// - Add few more symmetries for corners
+// - Idea improve standardization by testing most significant bit first, not continuing if unpromising, also changing order position and orientation due to this.
+// - Store Corner and Edge Databases as array instead of unordered map. Use the key as indices by transforming it into factorial.
+// - Use Symmetry to have only one Edge Database instead of two
 // - Increase Size of Edge Database (amount of Edges tracked) thanks to savings due to symmetry and array storage, 8 Edges should be possible
 // - Add more Types of Databases in the hope of improving heuristics. Full Edge Database for some moves? Permutation only database. Corner and Edge Combination database.
 // - Improve Node Generation Speed (don't know exactly how. Smart maths or something)
-// - Idea improve standardization by applying symmetry to put corner 0 at position 0
 

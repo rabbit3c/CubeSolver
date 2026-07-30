@@ -16,16 +16,16 @@ void Cube::move(int face, int n) {
         uint8_t edge = getEdge(edgesMoves[face][i]);
 
         if (face > 1 && n != 2) {
-            uint8_t twist = (corner >> 3) & maskCornerTwist;
-            corner &= maskCorner;
+            uint8_t twist = corner & maskCornerTwist;
+            corner &= ~maskCornerTwist;
 
             twist += cornerTwist[i];
             twist = twist % 3;
 
-            corner |= (twist << 3);
+            corner |= twist;
         }
 
-        if (n != 2) edge ^= maskEdgeTwist << 4;
+        if (n != 2) edge ^= maskEdgeTwist;
 
         c[i] = corner;
         e[i] = edge;
@@ -119,7 +119,7 @@ bool Cube::completion() {
 
 CubeKey Cube::toKey() {
     uint64_t standardizedCorners = Symmetry::standardizeCorners(corners);
-    uint64_t standardizedEdges = Symmetry::standardizeEdges(edges);
+    uint64_t standardizedEdges = Symmetry::standardizeEdges(edges, 8);
     return CubeKey{ standardizedCorners, standardizedEdges };
 }
 
@@ -134,10 +134,10 @@ EdgeKey Cube::toEdgeKey(int n) {
     uint64_t standardized = UINT64_MAX;
 
     for (int i = 0; i < Symmetry::edgeSymmetries.size(); i++) {
-        uint64_t transformed = Symmetry::applyEdgeSymmetry(edges, i);
+        uint64_t transformed = Symmetry::applyEdgeSymmetry(edges, i, UINT64_MAX);
 
         for (int slot = 0; slot < 12; slot++) {
-            uint8_t edgeID = (transformed >> slot * 5) & 0b01111;
+            uint8_t edgeID = (transformed >> (slot * 5 + 1)) & 0b1111;
 
             if (edgeID >= a && edgeID < b) continue;
             transformed |= (maskSquare << (slot * 5));

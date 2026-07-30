@@ -62,9 +62,6 @@ void Database<KeyType, Hash, HashType>::findChildren(Cube cube, int depth, int l
 
     for (int i = 0; i < 6; i++) {
         if (i == lastMove) continue;
-        if (i == 0 && lastMove == 1) continue;
-        if (i == 3 && lastMove == 5) continue;
-        if (i == 2 && lastMove == 4) continue;
 
         for (int n = 1; n <= 3; n++) {
             Cube newCube = cube;
@@ -95,9 +92,7 @@ bool Database<KeyType, Hash, HashType>::addEntry(Cube cube) {
 
     collisions++;
 
-    if (it->second < cube.g) return true;
-    if (it->second == cube.g && cube.g > 7) return true;
-    if (it->second == cube.g) return false;
+    if (it->second <= cube.g) return true;
 
     it->second = static_cast<uint8_t>(cube.g);
     return false;

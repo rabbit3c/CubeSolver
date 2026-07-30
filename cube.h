@@ -48,8 +48,8 @@ public:
     uint8_t getCorner(int i);
 
 private:
-    static const uint64_t solvedCorners = 247132686368;
-    static const uint64_t solvedEdges = 407901468851537952;
+    static const uint64_t solvedCorners = 988530745472;
+    static const uint64_t solvedEdges = 815802937703075904;
 
     static const array<int[4], 6> cornersMoves; //U, D, F, L, B, R
     static const array<int[4], 6> edgesMoves;

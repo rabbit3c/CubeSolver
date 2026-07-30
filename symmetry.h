@@ -9,13 +9,15 @@ using namespace std;
 
 namespace Symmetry {
     inline vector<array<uint8_t, 8>> cornerSymmetries = { {
-        {3, 2, 1, 0, 7, 6, 5, 4},
+        {0, 1, 2, 3, 4, 5, 6, 7},
         {2, 0, 3, 1, 6, 4, 7, 5},
         {1, 3, 0, 2, 5, 7, 4, 6},
+        {3, 2, 1, 0, 7, 6, 5, 4},
+
+        {4, 6, 5, 7, 0, 2, 1, 3},
         {5, 4, 7, 6, 1, 0, 3, 2},
         {6, 7, 4, 5, 2, 3, 0, 1},
         {7, 5, 6, 4, 3, 1, 2, 0},
-        {4, 6, 5, 7, 0, 2, 1, 3},
     } };
 
     inline vector<array<uint8_t, 12>> edgeSymmetries = { {
@@ -50,9 +52,9 @@ namespace Symmetry {
         {6, 1, 5, 9, 10, 2, 0, 8, 7, 3, 4, 11},
     } };
 
-    uint64_t applyCornerSymmetry(uint64_t corners, int i);
-    uint64_t applyEdgeSymmetry(uint64_t edges, int i);
+    uint64_t applyCornerSymmetry(uint64_t corners, int i, uint64_t max);
+    uint64_t applyEdgeSymmetry(uint64_t edges, int i, uint64_t max);
 
-    uint64_t standardizeCorners(uint64_t);
-    uint64_t standardizeEdges(uint64_t);
+    uint64_t standardizeCorners(uint64_t corners);
+    uint64_t standardizeEdges(uint64_t edges, int maxSymmetry = edgeSymmetries.size());
 };
