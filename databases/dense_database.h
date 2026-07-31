@@ -56,20 +56,16 @@ protected:
         string path = getPath();
         if (!filesystem::is_directory(path)) return false;
 
-        int i = 0;
-
         ifstream file(path + "/shard.bin", ios::binary);
-        while (file.peek() != EOF) {
-            uint8_t distance;
+        if (!file) return false;
 
-            if (!file.read((char*)&distance, sizeof(distance))) return false;
-
-            db[i] = distance;
-            i++;
-        }
-
+        file.read(reinterpret_cast<char*>(rawBytePointer(db)), db.size());
         return true;
     };
+
+    uint8_t* rawBytePointer(vector<atomic<uint8_t>>& db) {
+        return reinterpret_cast<uint8_t*>(db.data());
+    }
 
     int factorial(int n) {
         if (n < 0) throw;

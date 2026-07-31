@@ -101,9 +101,9 @@ int main() {
 //IDEAS
 
 // - Add few more symmetries for corners
+// - Using symmetry try to use same edge database for other edges
+// - Split Edge Database on multiple shards to improve loading and saving
 // - Idea improve standardization by testing most significant bit first, not continuing if unpromising, also changing order position and orientation due to this.
-// - Store Corner and Edge Databases as array instead of unordered map. Use the key as indices by transforming it into factorial.
-// - Use Symmetry to have only one Edge Database instead of two
 // - Increase Size of Edge Database (amount of Edges tracked) thanks to savings due to symmetry and array storage, 8 Edges should be possible
 // - Add more Types of Databases in the hope of improving heuristics. Full Edge Database for some moves? Permutation only database. Corner and Edge Combination database.
 // - Improve Node Generation Speed (don't know exactly how. Smart maths or something)
