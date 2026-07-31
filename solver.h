@@ -21,7 +21,6 @@ private:
     EndDatabase endDatabase = EndDatabase(8);
     CornerDatabase cornerDatabase = CornerDatabase(12);
     EdgeDatabase edgeDatabaseA = EdgeDatabase(12, 0);
-    EdgeDatabase edgeDatabaseB = EdgeDatabase(12, 1);
 
     atomic<bool> found{ false };
     atomic<bool> solved{ false };

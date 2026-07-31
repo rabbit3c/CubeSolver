@@ -13,10 +13,6 @@ void generateDatabases() {
         edgeDatabase.init();
     }
     {
-        auto edgeDatabase = EdgeDatabase(12, 1);
-        edgeDatabase.init();
-    }
-    {
         auto endDatabase = EndDatabase(8);
         endDatabase.init();
     }
@@ -60,8 +56,6 @@ void testDatabases() {
     cornerDatabase.init();
     auto edgeDatabaseA = EdgeDatabase(12, 0);
     edgeDatabaseA.init();
-    auto edgeDatabaseB = EdgeDatabase(12, 1);
-    edgeDatabaseB.init();
     auto endDatabase = EndDatabase(8);
     endDatabase.init();
 
@@ -74,7 +68,6 @@ void testDatabases() {
             cout << "Move " << i + 1 << ": ";
             cout << cornerDatabase.check(cube) << ", ";
             cout << edgeDatabaseA.check(cube) << ", ";
-            cout << edgeDatabaseB.check(cube) << ", ";
             cout << endDatabase.check(cube) << endl;
         }
 
@@ -84,10 +77,10 @@ void testDatabases() {
 
 int main() {
     //test(15, 5);
-    generateDatabases();
+    //generateDatabases();
     //testSymmetry();
     //testDatabases();
-    return 0;
+    //return 0;
 
     SetConsoleOutputCP(CP_UTF8);
 

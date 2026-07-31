@@ -7,7 +7,6 @@
 
 Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {
     edgeDatabaseA.init();
-    edgeDatabaseB.init();
     endDatabase.init();
     cornerDatabase.init();
 }
@@ -142,7 +141,7 @@ bool Solver::evaluate(Cube& cube) {
 }
 
 array<int, 3> Solver::getArrayH(Cube& cube) {
-    return { cornerDatabase.check(cube), edgeDatabaseA.check(cube), edgeDatabaseB.check(cube) };
+    return { cornerDatabase.check(cube), edgeDatabaseA.check(cube) };
 }
 
 void test(int depth, int runs) {

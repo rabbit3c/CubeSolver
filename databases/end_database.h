@@ -1,10 +1,10 @@
 #pragma once
 
-#include "database.h"
+#include "hash_database.h"
 
-class EndDatabase : public Database<CubeKey, CubeKeyHash, size_t> {
+class EndDatabase : public HashDatabase<CubeKey, CubeKeyHash, size_t> {
 public:
-    EndDatabase(int depth) : Database(depth) {
+    EndDatabase(int depth) : HashDatabase(depth) {
         name = "End";
     };
 

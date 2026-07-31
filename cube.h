@@ -42,8 +42,6 @@ public:
     bool completion();
 
     CubeKey toKey();
-    CornerKey toCornerKey();
-    EdgeKey toEdgeKey(int n);
 
     uint8_t getCorner(int i);
 

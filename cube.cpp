@@ -122,29 +122,3 @@ CubeKey Cube::toKey() {
     uint64_t standardizedEdges = Symmetry::standardizeEdges(edges, 8);
     return CubeKey{ standardizedCorners, standardizedEdges };
 }
-
-CornerKey Cube::toCornerKey() {
-    uint64_t standardized = Symmetry::standardizeCorners(corners);
-    return CornerKey{ standardized };
-}
-
-EdgeKey Cube::toEdgeKey(int n) {
-    int a = n == 0 ? 0 : 5;
-    int b = n == 0 ? 7 : 12;
-    uint64_t standardized = UINT64_MAX;
-
-    for (int i = 0; i < Symmetry::edgeSymmetries.size(); i++) {
-        uint64_t transformed = Symmetry::applyEdgeSymmetry(edges, i, UINT64_MAX);
-
-        for (int slot = 0; slot < 12; slot++) {
-            uint8_t edgeID = (transformed >> (slot * 5 + 1)) & 0b1111;
-
-            if (edgeID >= a && edgeID < b) continue;
-            transformed |= (maskSquare << (slot * 5));
-        }
-
-        if (transformed < standardized) standardized = transformed;
-    }
-
-    return EdgeKey{ standardized };
-}
