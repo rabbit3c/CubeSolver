@@ -6,6 +6,8 @@
 #include <numeric>
 
 Solver::Solver(int maxDepth, bool logging) : maxDepth(maxDepth), logging(logging) {
+    depth = min(maxDepth, 12);
+
     edgeDatabaseA.init();
     endDatabase.init();
     cornerDatabase.init();
@@ -41,11 +43,10 @@ void Solver::multisolve(Cube cube) {
     auto end = chrono::system_clock::now();
     auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
 
-    if (solved) {
-        cout << endl << "Amount of explored nodes: " << nodes << endl;
-        cout << "Nodes per second: " << nodes / duration.count() * 1000 << "/s" << endl;
-        return;
-    }
+    cout << "Amount of explored nodes: " << nodes << endl;
+    cout << "Nodes per second: " << nodes / duration.count() * 1000 << "/s" << endl << endl;
+
+    if (solved) return;
 
     if (found) {
         cout << "Cube was found in the Database but not solved" << endl;

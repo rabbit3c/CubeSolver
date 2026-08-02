@@ -69,7 +69,8 @@ namespace Moves {
 
     void generate();
 
-    uint64_t getCornersFromArray(array<uint64_t, 8>& ids);
+    uint64_t getCornerXOR(uint64_t corners, int face, int n);
+    uint64_t getEdgeXOR(uint64_t edges, int face, int n);
 
     int nextIndex(int i, int n);
 }

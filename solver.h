@@ -12,7 +12,7 @@ class Solver {
 public:
     Solver(int maxDepth, bool logging = true);
 
-    int depth = 12;
+    int depth;
 
     bool solve(Cube cube, int lastMove, int& nodes);
     void multisolve(Cube cube);

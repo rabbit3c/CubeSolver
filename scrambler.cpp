@@ -70,7 +70,6 @@ void scramble(Cube& cube, int numMoves, bool logging) {
         cout << "Cube scrambled" << endl;
         cout << "Scramble: " << endl;
         cube.printMoves();
-        cout << endl;
     }
 
     cube.clearMoves();

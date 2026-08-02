@@ -61,6 +61,8 @@ namespace Moves {
                         result |= func(ids, face, n, i) << (moves[face][j] * 5 + offset);
                     }
 
+                    result ^= key;
+
                     if (lookupTable[face][n - 1].count(key) != 0) throw invalid_argument("Already in Lookup Table");
                     lookupTable[face][n - 1][key] = result;
                 }
@@ -113,14 +115,16 @@ namespace Moves {
         generateLookup(options, false, edgesMoves, 0, funcEdgeTwist, edgeTwistsLookup);
     }
 
-    uint64_t getCornersFromArray(array<uint64_t, 8>& ids) {
-        uint64_t corners = 0;
+    uint64_t getCornerXOR(uint64_t corners, int face, int n) {
+        uint64_t cornerIDs = corners & masksCornerIDs[face];
+        uint64_t cornerTwists = corners & masksCornerTwists[face];
+        return cornerIDsLookup[face][n - 1][cornerIDs] | cornerTwistsLookup[face][n - 1][cornerTwists];
+    }
 
-        for (int i = 0; i < 8; i++) {
-            corners |= ids[i] << i * 5 + 2;
-        }
-
-        return corners;
+    uint64_t getEdgeXOR(uint64_t edges, int face, int n) {
+        uint64_t edgeIDs = edges & masksEdgeIDs[face];
+        uint64_t edgeTwists = edges & masksEdgeTwists[face];
+        return edgeIDsLookup[face][n - 1][edgeIDs] | edgeTwistsLookup[face][n - 1][edgeTwists];
     }
 
     int nextIndex(int i, int n) {

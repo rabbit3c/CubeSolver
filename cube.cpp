@@ -11,16 +11,8 @@ Cube::Cube() {
 }
 
 void Cube::move(int face, int n) {
-    uint64_t cornerIDs = corners & Moves::masksCornerIDs[face];
-    uint64_t cornerTwists = corners & Moves::masksCornerTwists[face];
-    uint64_t edgeIDs = edges & Moves::masksEdgeIDs[face];
-    uint64_t edgeTwists = edges & Moves::masksEdgeTwists[face];
-
-    corners &= ~Moves::masksCornerIDs[face] & ~Moves::masksCornerTwists[face];
-    edges &= ~Moves::masksEdgeIDs[face] & ~Moves::masksEdgeTwists[face];
-
-    corners |= Moves::cornerIDsLookup[face][n - 1][cornerIDs] | Moves::cornerTwistsLookup[face][n - 1][cornerTwists];
-    edges |= Moves::edgeIDsLookup[face][n - 1][edgeIDs] | Moves::edgeTwistsLookup[face][n - 1][edgeTwists];
+    corners ^= Moves::getCornerXOR(corners, face, n);
+    edges ^= Moves::getEdgeXOR(edges, face, n);
 
     addMove(face, n);
     g++;
@@ -56,7 +48,7 @@ void Cube::printMoves() {
 
         cout << str << " ";
     }
-    cout << endl;
+    cout << endl << endl;
 }
 
 void Cube::clearMoves() {
