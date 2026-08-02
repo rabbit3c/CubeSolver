@@ -19,8 +19,8 @@ void Cube::move(int face, int n) {
     corners &= ~Moves::masksCornerIDs[face] & ~Moves::masksCornerTwists[face];
     edges &= ~Moves::masksEdgeIDs[face] & ~Moves::masksEdgeTwists[face];
 
-    corners |= Moves::cornerIDsLookup[n - 1][cornerIDs] | Moves::cornerTwistsLookup[face][n - 1][cornerTwists];
-    edges |= Moves::edgeIDsLookup[n - 1][edgeIDs] | Moves::edgeTwistsLookup[face][n - 1][edgeTwists];
+    corners |= Moves::cornerIDsLookup[face][n - 1][cornerIDs] | Moves::cornerTwistsLookup[face][n - 1][cornerTwists];
+    edges |= Moves::edgeIDsLookup[face][n - 1][edgeIDs] | Moves::edgeTwistsLookup[face][n - 1][edgeTwists];
 
     addMove(face, n);
     g++;

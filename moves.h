@@ -4,12 +4,19 @@
 #include <cstdint>
 #include <unordered_map>
 #include <algorithm>
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+#include <functional>
+
+#include "corners.h"
+#include "edges.h"
 
 using namespace std;
 
 namespace Moves {
-    inline array<unordered_map<uint64_t, uint64_t>, 3> cornerIDsLookup;
-    inline array<unordered_map<uint64_t, uint64_t>, 3> edgeIDsLookup;
+    inline array<array<unordered_map<uint64_t, uint64_t>, 3>, 6> cornerIDsLookup;
+    inline array<array<unordered_map<uint64_t, uint64_t>, 3>, 6> edgeIDsLookup;
 
     inline array<array<unordered_map<uint64_t, uint64_t>, 3>, 6> cornerTwistsLookup;
     inline array<array<unordered_map<uint64_t, uint64_t>, 3>, 6> edgeTwistsLookup;
@@ -47,6 +54,14 @@ namespace Moves {
     const int twistCorners[4] = { 1, 2, 1, 2 };
 
     void generateMasks();
+
+    void generateLookup(const vector<uint8_t>& options, const bool unique, const array<array<int, 4>, 6>& moves, int offset,
+        function<uint64_t(array<uint8_t, 4>, int, int, int)> func, array<array<unordered_map<uint64_t, uint64_t>, 3>, 6>& lookupTable);
+
+    uint64_t funcID(array<uint8_t, 4> ids, int face, int n, int i);
+    uint64_t funcCornerTwist(array<uint8_t, 4> ids, int face, int n, int i);
+    uint64_t funcEdgeTwist(array<uint8_t, 4> ids, int face, int n, int i);
+
     void generateCornerIDsLookup();
     void generateCornerTwistsLookup();
     void generateEdgeIDsLookup();
