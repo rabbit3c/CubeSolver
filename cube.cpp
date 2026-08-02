@@ -1,5 +1,8 @@
 #include "cube.h"
 #include "symmetry.h"
+#include "moves.h"
+#include "corners.h"
+#include "edges.h"
 #include <cmath>
 
 Cube::Cube() {
@@ -8,72 +11,19 @@ Cube::Cube() {
 }
 
 void Cube::move(int face, int n) {
-    array<uint64_t, 4> c;
-    array<uint64_t, 4> e;
+    uint64_t cornerIDs = corners & Moves::masksCornerIDs[face];
+    uint64_t cornerTwists = corners & Moves::masksCornerTwists[face];
+    uint64_t edgeIDs = edges & Moves::masksEdgeIDs[face];
+    uint64_t edgeTwists = edges & Moves::masksEdgeTwists[face];
 
-    for (int i = 0; i < 4; i++) {
-        uint8_t corner = getCorner(cornersMoves[face][i]);
-        uint8_t edge = getEdge(edgesMoves[face][i]);
+    corners &= ~Moves::masksCornerIDs[face] & ~Moves::masksCornerTwists[face];
+    edges &= ~Moves::masksEdgeIDs[face] & ~Moves::masksEdgeTwists[face];
 
-        if (face > 1 && n != 2) {
-            uint8_t twist = corner & maskCornerTwist;
-            corner &= ~maskCornerTwist;
-
-            twist += cornerTwist[i];
-            twist = twist % 3;
-
-            corner |= twist;
-        }
-
-        if (n != 2) edge ^= maskEdgeTwist;
-
-        c[i] = corner;
-        e[i] = edge;
-    }
-
-    for (int i = 0; i < 4; i++) {
-        int j = (i - n + 4) % 4;
-
-        int shiftCorner = cornersMoves[face][i] * 5;
-        uint64_t maskCorner = maskSquare << shiftCorner;
-        corners = (corners & ~maskCorner) | (c[j] << shiftCorner);
-
-        int shiftEdge = edgesMoves[face][i] * 5;
-        uint64_t maskEdge = maskSquare << shiftEdge;
-        edges = (edges & ~maskEdge) | (e[j] << shiftEdge);
-    }
+    corners |= Moves::cornerIDsLookup[n - 1][cornerIDs] | Moves::cornerTwistsLookup[face][n - 1][cornerTwists];
+    edges |= Moves::edgeIDsLookup[n - 1][edgeIDs] | Moves::edgeTwistsLookup[face][n - 1][edgeTwists];
 
     addMove(face, n);
     g++;
-}
-
-//U, D, F, L, B, R
-const array<int[4], 6> Cube::cornersMoves = { {
-    {0, 1, 3, 2},
-    {6, 7, 5, 4},
-    {2, 3, 7, 6},
-    {0, 2, 6, 4},
-    {1, 0, 4, 5},
-    {3, 1, 5, 7},
-} };
-
-const array<int[4], 6> Cube::edgesMoves = { {
-    {0, 1, 2, 3},
-    {10, 9, 8, 11},
-    {2, 6, 10, 7},
-    {3, 7, 11, 4},
-    {0, 4, 8, 5},
-    {1, 5, 9, 6},
-} };
-
-const int Cube::cornerTwist[4] = { 1, 2, 1, 2 };
-
-uint8_t Cube::getCorner(int i) {
-    return (corners >> i * 5) & maskSquare;
-}
-
-uint8_t Cube::getEdge(int i) {
-    return (edges >> i * 5) & maskSquare;
 }
 
 void Cube::addMove(int i, int n) {

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <iostream>
 
 using namespace std;
 
@@ -16,4 +17,6 @@ namespace Corners {
     uint8_t getCornerID(uint64_t corners, int i);
 
     uint8_t getCornerOrientation(uint64_t corners, int i);
+
+    void print(uint64_t corners);
 }

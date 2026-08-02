@@ -57,7 +57,7 @@ protected:
             rank += orientations[i] << i;
         }
 
-        if (rank >= 510935040) throw;
+        if (rank >= 510935040) throw invalid_argument("rank too high");
         return rank;
     }
 };

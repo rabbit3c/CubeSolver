@@ -17,11 +17,24 @@ namespace Edges {
         return edgeOrientations;
     }
 
+    uint8_t getEdge(uint64_t edges, int i) {
+        return (edges >> i * 5) & 0b11111;
+    }
+
     uint8_t getEdgeID(uint64_t edges, int i) {
         return (edges >> (i * 5 + 1)) & 0b1111;
     }
 
     uint8_t getEdgeOrientation(uint64_t edges, int i) {
         return (edges >> i * 5) & 0b1;
+    }
+
+    void print(uint64_t edges) {
+        for (int i = 0; i < 12; i++) {
+            uint8_t edge = (edges >> (i * 5 + 1)) & 0b1111;
+            cout << to_string(edge) << " ";
+        }
+
+        cout << endl << endl;
     }
 }

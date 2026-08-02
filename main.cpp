@@ -4,6 +4,7 @@
 #include "scrambler.h"
 #include "solver.h"
 #include "symmetry.h"
+#include "moves.h"
 
 using namespace std;
 
@@ -75,16 +76,29 @@ void testDatabases() {
     }
 }
 
+void testMoves() {
+    Moves::generate();
+    for (int i = 0; i < 6; i++) {
+        Cube cube = Cube();
+        cube.move(i, 1);
+        cube.move(i, 3);
+        if (!cube.completion()) cout << "Move " << i << " doesn't work" << endl;
+    }
+}
+
 int main() {
     //test(15, 5);
     //generateDatabases();
     //testSymmetry();
     //testDatabases();
+    //testMoves();
     //return 0;
 
     SetConsoleOutputCP(CP_UTF8);
 
     const int depth = 15;
+
+    Moves::generate();
 
     Cube cube = Cube();
     Solver solver = Solver(depth);
@@ -101,8 +115,10 @@ int main() {
 //IDEAS
 
 // - Add few more symmetries for corners
+// - Precompute Move Look Up Tables
 // - Using symmetry try to use same edge database for other edges
 // - Split Edge Database on multiple shards to improve loading and saving
+// - Improve Code by reusing some function. mostly getCorner etc.
 // - Idea improve standardization by testing most significant bit first, not continuing if unpromising, also changing order position and orientation due to this.
 // - Increase Size of Edge Database (amount of Edges tracked) thanks to savings due to symmetry and array storage, 8 Edges should be possible
 // - Add more Types of Databases in the hope of improving heuristics. Full Edge Database for some moves? Permutation only database. Corner and Edge Combination database.

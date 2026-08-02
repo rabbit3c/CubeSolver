@@ -68,7 +68,7 @@ protected:
     }
 
     int factorial(int n) {
-        if (n < 0) throw;
+        if (n < 0) throw invalid_argument("n too small");;
 
         int f = 1;
         for (int i = 1; i <= n; i++) {

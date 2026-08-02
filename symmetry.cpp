@@ -59,14 +59,5 @@ namespace Symmetry {
 
         return standardized;
     }
-
-    void printCorners(uint64_t corners) {
-        for (int i = 0; i < 8; i++) {
-            uint8_t corner = (corners >> (i * 5 + 2)) & 0b111;
-            cout << to_string(corner) << " ";
-        }
-
-        cout << endl << endl;
-    }
 }
 

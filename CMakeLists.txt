@@ -4,7 +4,8 @@ project(CubeSolver VERSION 0.1.0 LANGUAGES C CXX)
 add_executable(CubeSolver main.cpp colors.cpp cube.cpp scrambler.cpp
     solver.cpp symmetry.cpp
     corners.cpp
-    edges.cpp)
+    edges.cpp
+    moves.cpp)
 
 include(CTest)
 enable_testing()

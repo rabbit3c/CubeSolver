@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <iostream>
+#include <unordered_map>
 #include "databases/database_keys.h"
 
 using namespace std;
@@ -43,24 +44,9 @@ public:
 
     CubeKey toKey();
 
-    uint8_t getCorner(int i);
-
 private:
     static const uint64_t solvedCorners = 988530745472;
     static const uint64_t solvedEdges = 815802937703075904;
-
-    static const array<int[4], 6> cornersMoves; //U, D, F, L, B, R
-    static const array<int[4], 6> edgesMoves;
-
-    static const int cornerTwist[4];
-
-    static const uint64_t maskSquare = 0b11111;
-    static const uint64_t maskEdge = 0b1111;
-    static const uint64_t maskCorner = 0b111;
-    static const uint64_t maskCornerTwist = 0b11;
-    static const uint64_t maskEdgeTwist = 0b1;
-
-    uint8_t getEdge(int i);
 
     void addMove(int c, int n);
 };

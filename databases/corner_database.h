@@ -40,7 +40,7 @@ protected:
             rank += orientations[i] * pow3[i];
         }
 
-        if (rank >= 88179840) throw;
+        if (rank >= 88179840) throw invalid_argument("rank too high");;
         return rank;
     }
 };
